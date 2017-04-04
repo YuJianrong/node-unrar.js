@@ -1,0 +1,18 @@
+{
+    "include": [
+      "src/**/*.ts"
+    ],
+    "compilerOptions": {
+        "noImplicitAny": true,
+        "declaration": true,
+        "strictNullChecks": true,
+        "target": "es5",
+        "lib": ["es5", "dom", "es2015.core"],
+        "module": "commonjs",
+        "typeRoots": [ "node_modules/@types/" ],
+        "moduleResolution": "node",
+        "rootDir": "./src",
+        "outDir": "dist",
+        "stripInternal": true
+    }
+}

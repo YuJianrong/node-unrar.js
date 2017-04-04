@@ -1,0 +1,13 @@
+{
+    "extends": "tslint:recommended",
+    "rules": {
+        "one-variable-per-declaration": [false],
+        "interface-name": [
+            true, "never-prefix"
+        ],
+        "object-literal-sort-keys": false,
+        "no-unused-expression": false,
+        "prefer-const": false,
+        "variable-name": false
+    }
+}

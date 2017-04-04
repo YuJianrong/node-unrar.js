@@ -1,0 +1,13 @@
+IMPORTS
+  unrar.RAROpenArchive
+  unrar.RAROpenArchiveEx
+  unrar.RARCloseArchive
+  unrar.RARReadHeader
+  unrar.RARReadHeaderEx
+  unrar.RARProcessFile
+  unrar.RARProcessFileW
+  unrar.RARSetChangeVolProc
+  unrar.RARSetProcessDataProc
+  unrar.RARSetCallback
+  unrar.RARSetPassword
+
