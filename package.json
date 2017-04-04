@@ -1,8 +1,14 @@
 {
-  "name": "rar",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "node-unrar.js",
+  "version": "0.0.1",
+  "description": "Pure JavaScript RAR archive extractor by compile the official unrar lib by Emscripten.",
+  "homepage": "https://github.com/YuJianrong/node-unrar.js",
+  "bugs": {
+    "url": "https://github.com/YuJianrong/node-unrar.js/issues"
+  },
+  "repository": "YuJianrong/node-unrar.js",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "scripts": {
     "prepare": "wget http://www.rarlab.com/rar/unrarsrc-5.4.5.tar.gz && tar -xf unrarsrc-5.4.5.tar.gz -C src/cpp && rm unrarsrc-5.4.5.tar.gz",
     "test": "mocha dist/test/*.spec.js",
@@ -18,8 +24,11 @@
     "coverage": "tsc --sourceMap --outDir dist_map && istanbul cover node_modules/.bin/_mocha -- dist_map/test/*.spec.js",
     "browserify": "mkdir umd; browserify dist/index.js -s array-diff -o umd/array-diff.js"
   },
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "unrar"
+  ],
+  "author": "Jianrong Yu <yujianrong@gmail.com>",
+  "license": "MIT",
   "devDependencies": {
     "@types/mocha": "^2.2.40",
     "@types/shelljs": "^0.7.0",

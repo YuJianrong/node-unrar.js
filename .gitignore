@@ -31,3 +31,4 @@ umd
 
 src/cpp/unrar
 .vscode
+.npmrc
