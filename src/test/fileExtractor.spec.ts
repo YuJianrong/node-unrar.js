@@ -11,8 +11,17 @@ describe("File Test", () => {
       state: "SUCCESS",
     });
     assert.deepStrictEqual(list, {
-      comment: "Test Comments for rar files.\r\n\r\n测试一下中文注释。\r\n日本語のコメントもテストしていまし。",
-      files: [
+      arcHeader: {
+        comment: "Test Comments for rar files.\r\n\r\n测试一下中文注释。\r\n日本語のコメントもテストしていまし。",
+        flags: {
+          authInfo: false,
+          headerEncrypted: false,
+          lock: false,
+          recoveryRecord: false,
+          solid: false,
+          volumn: false,
+        },
+      }, fileHeaders: [
         {
           crc: 0,
           fileAttr: 32,
@@ -46,14 +55,6 @@ describe("File Test", () => {
           unpVer: "2.9",
         },
       ],
-      flags: {
-        authInfo: false,
-        headerEncrypted: false,
-        lock: false,
-        recoveryRecord: false,
-        solid: false,
-        volumn: false,
-      },
     });
   });
 
@@ -64,8 +65,17 @@ describe("File Test", () => {
       state: "SUCCESS",
     });
     assert.deepStrictEqual(list, {
-      comment: "Hello, world",
-      files: [
+      arcHeader: {
+        comment: "Hello, world",
+        flags: {
+          authInfo: false,
+          headerEncrypted: true,
+          lock: false,
+          recoveryRecord: false,
+          solid: false,
+          volumn: false,
+        },
+      }, fileHeaders: [
         {
           crc: 2631402331,
           fileAttr: 32,
@@ -99,14 +109,6 @@ describe("File Test", () => {
           unpVer: "2.9",
         },
       ],
-      flags: {
-        authInfo: false,
-        headerEncrypted: true,
-        lock: false,
-        recoveryRecord: false,
-        solid: false,
-        volumn: false,
-      },
     });
   });
 

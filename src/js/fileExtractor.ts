@@ -8,6 +8,7 @@ export class FileExtractor extends Extractor {
     [fd: number]: {
       size: number;
       pos: number;
+      name: string;
     },
   };
   constructor(filepath: string, password: string) {
@@ -20,15 +21,17 @@ export class FileExtractor extends Extractor {
     this.fileMap[fd] = {
       size: fs.fstatSync(fd).size,
       pos: 0,
+      name: filename,
     };
     return fd;
   }
   protected create(filename: string): number {
     return 0;
   }
-  protected close(fd: number): void {
+  protected closeFile(fd: number): Uint8Array | null {
     delete this.fileMap[fd];
     fs.closeSync(fd);
+    return null;
   }
   protected read(fd: number, buf: any, size: number): number {
     let file = this.fileMap[fd];

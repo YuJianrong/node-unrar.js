@@ -4,7 +4,7 @@ mergeInto(LibraryManager.library, {
     return jsAPI.open.call(null, UTF32ToString(filename));
   },
   jsCreate: function(filename){
-    return jsAPI.create.apply(null, UTF32ToString(arguments));
+    return jsAPI.create.call(null, UTF32ToString(filename));
   },
   jsClose: function() {
     return jsAPI.close.apply(null, arguments);

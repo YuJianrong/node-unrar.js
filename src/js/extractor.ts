@@ -68,7 +68,7 @@ const ERROR_MSG: { [index: number]: string } = {
   24: "Wrong password is specified",
 };
 
-export interface File {
+export interface FileHeader {
   name: string;
   flags: {
     encrypted: boolean,
@@ -86,7 +86,7 @@ export interface File {
   fileAttr: number;
 }
 
-export interface Header {
+export interface ArcHeader {
   comment: string;
   flags: {
     volumn: boolean,
@@ -96,21 +96,150 @@ export interface Header {
     recoveryRecord: boolean,
     headerEncrypted: boolean,
   };
-  files: File[];
+  // files: FileHeader[];
 }
 
-export type FileListResult = [State, Header | null];
+export interface ArcList {
+  arcHeader: ArcHeader;
+  fileHeaders: FileHeader[];
+}
+
+export type Result<T> = [State, T | null];
+
+export interface ArcFile {
+  fileHeader: FileHeader;
+  extract: Result<Uint8Array>;
+}
+
+export interface ArcFiles {
+  arcHeader: ArcHeader;
+  files: ArcFile[];
+}
 
 export abstract class Extractor {
   private static _current: Extractor | null = null;
   protected abstract _filePath: string;
   private _password: string;
+  private _archive: any;
+  private _lastFileContent: Uint8Array | null;
 
   constructor(password: string) {
     this._password = password;
+    this._archive = null;
   }
 
-  public getFileList(): FileListResult {
+  public getFileList(): Result<ArcList> {
+
+    let ret: Result<ArcList>;
+    let [state, arcHeader] = this.openArc(true);
+    if (state.state !== "SUCCESS") {
+      ret = [state, null];
+    } else {
+      let fileState, arcFile;
+      let fileHeaders: FileHeader[] = [];
+      while (true) {
+        [fileState, arcFile] = this.processNextFile(() => ({ skip: true }));
+        if (fileState.state !== "SUCCESS") {
+          break;
+        }
+        fileHeaders.push(arcFile!.fileHeader);
+      }
+      if ((fileState as { reason: FailReason }).reason !== "ERAR_END_ARCHIVE") {
+        ret = [fileState, null];
+      } else {
+        ret = [{
+          state: "SUCCESS",
+        }, {
+          arcHeader: arcHeader!,
+          fileHeaders,
+        }];
+      }
+    }
+    this.closeArc();
+
+    return ret;
+  }
+
+  public extractAll(): Result<ArcFiles> {
+
+    let ret: Result<ArcFiles>;
+    let [state, arcHeader] = this.openArc(false);
+    if (state.state !== "SUCCESS") {
+      ret = [state, null];
+    } else {
+      let fileState, arcFile;
+      let files: ArcFile[] = [];
+      while (true) {
+        [fileState, arcFile] = this.processNextFile(() => ({ skip: false }));
+        if (fileState.state !== "SUCCESS") {
+          break;
+        }
+        files.push(arcFile!);
+      }
+      if ((fileState as { reason: FailReason }).reason !== "ERAR_END_ARCHIVE") {
+        ret = [fileState, null];
+      } else {
+        ret = [{
+          state: "SUCCESS",
+        }, {
+          arcHeader: arcHeader!,
+          files,
+        }];
+      }
+    }
+    this.closeArc();
+
+    return ret;
+  }
+
+  protected fileCreated(filename: string): void {
+    return;
+  }
+
+  protected abstract open(filename: string): number;
+  protected abstract create(filename: string): number;
+  protected abstract read(fd: number, buf: any, size: number): number;
+  protected abstract write(fd: number, buf: any, size: number): boolean;
+  protected abstract tell(fd: number): number;
+  protected abstract seek(fd: number, pos: number, method: SeekMethod): boolean;
+  protected abstract closeFile(fd: number): Uint8Array | null;
+
+  protected close(fd: number): void {
+    this._lastFileContent = this.closeFile(fd);
+    return;
+  }
+
+  private openArc(listOnly: boolean): Result<ArcHeader> {
+
+    extIns.current = this;
+    this._archive = new unrar.RarArchive();
+    let header = this._archive.open(this._filePath, this._password, listOnly);
+    let ret: Result<ArcHeader>;
+    if (header.state.errCode !== 0) {
+      ret = [this.getFailInfo(header.state.errCode, header.state.errType), null];
+    } else {
+      ret = [{
+        state: "SUCCESS",
+      }, {
+        comment: header.comment,
+        flags: {
+          /* tslint:disable: no-bitwise */
+          volumn: (header.flags & 0x0001) !== 0,
+          lock: (header.flags & 0x0004) !== 0,
+          solid: (header.flags & 0x0008) !== 0,
+          authInfo: (header.flags & 0x0020) !== 0,
+          recoveryRecord: (header.flags & 0x0040) !== 0,
+          headerEncrypted: (header.flags & 0x0080) !== 0,
+          /* tslint:enable: no-bitwise */
+        },
+      }];
+    }
+    // archive.delete();
+    extIns.current = null;
+    return ret;
+  }
+
+  private processNextFile(callback: (_: string) => ({ skip: boolean, password?: string })): Result<ArcFile> {
 
     function getDateString(dosTime: number): string {
       const bitLen = [5, 6, 5, 5, 4, 7];
@@ -129,66 +258,68 @@ export abstract class Extractor {
     }
 
     extIns.current = this;
-    let result = unrar.getArchiveList(this._filePath, this._password);
-    extIns.current = null;
-
-    if (result.errCode !== 0) {
-      return [this.getFailInfo(result.errCode, result.errType), null];
+    let ret: Result<ArcFile>;
+    let arcFileHeader = this._archive.getFileHeader();
+    let extractInfo: Result<Uint8Array> = [{state: "SUCCESS"}, null];
+    if (arcFileHeader.state.errCode === 0) {
+      let op = callback(arcFileHeader.name);
+      this._lastFileContent = null;
+      let fileState = this._archive.readFile(op.skip, op.password || "");
+      if (fileState.errCode !== 0 && !op.skip) {
+        extractInfo[0] = this.getFailInfo(fileState.errCode, fileState.errType);
+        if (fileState.errCode === 22) {
+          fileState = this._archive.readFile(true, "");
+        } else {
+          fileState.errCode = 0;
+        }
+      }
+      if (fileState.errCode === 0) {
+        extractInfo[1] = this._lastFileContent;
+      } else {
+        arcFileHeader.state.errCode = fileState.errCode;
+        arcFileHeader.state.errType = fileState.errType;
+      }
+      this._lastFileContent = null;
     }
-
-    result = result.result;
-    let files: File[] = [];
-
-    let vecFileList = result.fileList;
-    for (let i = 0, l = vecFileList.size(); i < l; ++i) {
-      let file = vecFileList.get(i);
-      files.push({
-        name: file.name,
-        flags: {
-          /* tslint:disable: no-bitwise */
-          encrypted: (file.flags & 0x04) !== 0,
-          commented: (file.flags & 0x08) !== 0,
-          solid: (file.flags & 0x10) !== 0,
-          directory: (file.flags & 0b11100000) === 0b11100000,
-          /* tslint:enable: no-bitwise */
+    if (arcFileHeader.state.errCode !== 0) {
+      ret = [this.getFailInfo(arcFileHeader.state.errCode, arcFileHeader.state.errType), null];
+    } else {
+      ret = [{
+        state: "SUCCESS",
+      }, {
+        fileHeader: {
+          name: arcFileHeader.name,
+          flags: {
+            /* tslint:disable: no-bitwise */
+            encrypted: (arcFileHeader.flags & 0x04) !== 0,
+            commented: (arcFileHeader.flags & 0x08) !== 0,
+            solid: (arcFileHeader.flags & 0x10) !== 0,
+            directory: (arcFileHeader.flags & 0b11100000) === 0b11100000,
+            /* tslint:enable: no-bitwise */
+          },
+          packSize: arcFileHeader.packSize,
+          unpSize: arcFileHeader.unpSize,
+          // hostOS: arcFileHeader.hostOS
+          crc: arcFileHeader.crc,
+          time: getDateString(arcFileHeader.time),
+          unpVer: `${Math.floor(arcFileHeader.unpVer / 10)}.${(arcFileHeader.unpVer % 10)}`,
+          method: arcFileHeader.method,
+          fileAttr: arcFileHeader.fileAttr,
         },
-        packSize: file.packSize,
-        unpSize: file.unpSize,
-        // hostOS: file.hostOS
-        crc: file.crc,
-        time: getDateString(file.time),
-        unpVer: `${Math.floor(file.unpVer / 10)}.${(file.unpVer % 10)}`,
-        method: file.method,
-        fileAttr: file.fileAttr,
-      });
+        extract: extractInfo,
+      }];
     }
-    vecFileList.delete();
 
-    return [{
-      state: "SUCCESS",
-    }, {
-      comment: result.comment,
-      flags: {
-        /* tslint:disable: no-bitwise */
-        volumn: (result.flags & 0x0001) !== 0,
-        lock: (result.flags & 0x0004) !== 0,
-        solid: (result.flags & 0x0008) !== 0,
-        authInfo: (result.flags & 0x0020) !== 0,
-        recoveryRecord: (result.flags & 0x0040) !== 0,
-        headerEncrypted: (result.flags & 0x0080) !== 0,
-        /* tslint:enable: no-bitwise */
-      },
-      files,
-    }];
+    extIns.current = null;
+    return ret;
   }
 
-  protected abstract open(filename: string): number;
-  protected abstract create(filename: string): number;
-  protected abstract close(fd: number): void;
-  protected abstract read(fd: number, buf: any, size: number): number;
-  protected abstract write(fd: number, buf: any, size: number): boolean;
-  protected abstract tell(fd: number): number;
-  protected abstract seek(fd: number, pos: number, method: SeekMethod): boolean;
+  private closeArc(): void {
+    extIns.current = this;
+    this._archive.delete();
+    extIns.current = null;
+    this._archive = null;
+  }
 
   private getFailInfo(errCode: number, errType: string): State {
     return {

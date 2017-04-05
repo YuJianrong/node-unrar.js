@@ -4,7 +4,7 @@ export class DataFile {
   private buffers: Uint8Array[];
   private size: number;
   private pos: number;
-  constructor(data: Uint8Array | null) {
+  constructor(data?: Uint8Array) {
     this.buffers = [];
     this.pos = 0;
     this.size = 0;
@@ -24,6 +24,10 @@ export class DataFile {
     this.pos += size;
     // return this.buffers[0].subarray(oldPos, this.pos);
     return this.buffers[0].slice(oldPos, this.pos);
+  }
+  public readAll(): Uint8Array {
+    this.flatten();
+    return this.buffers[0];
   }
   public write(data: Uint8Array): boolean {
     this.buffers.push(data);

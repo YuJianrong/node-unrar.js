@@ -35,10 +35,20 @@ export class DataExtractor extends Extractor {
     return dataFile.fd;
   }
   protected create(filename: string): number {
-    return 0;
+    let fd = this.currentFd++;
+    this.dataFiles[filename] = {
+      file: new DataFile(),
+      fd: this.currentFd++,
+    };
+    this.dataFileMap[fd] = filename;
+    return fd;
   }
-  protected close(fd: number): void {
-    return;
+  protected closeFile(fd: number): Uint8Array | null {
+    let fileData = this.dataFiles[this.dataFileMap[fd]];
+    if (!fileData) {
+      return null;
+    }
+    return fileData.file.readAll();
   }
   protected read(fd: number, buf: any, size: number): number {
     let fileData = this.dataFiles[this.dataFileMap[fd]];
@@ -53,6 +63,11 @@ export class DataExtractor extends Extractor {
     return data.byteLength;
   }
   protected write(fd: number, buf: any, size: number): boolean {
+    let fileData = this.dataFiles[this.dataFileMap[fd]];
+    if (!fileData) {
+      return false;
+    }
+    fileData.file.write(unrar.HEAP8.slice(buf, buf + size));
     return true;
   }
   protected tell(fd: number): number {

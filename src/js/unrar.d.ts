@@ -1,2 +1,2 @@
-export function getArchiveList(...any:any[]): any;
+export let RarArchive: any;
 export let HEAP8: any;
