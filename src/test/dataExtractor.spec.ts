@@ -25,7 +25,7 @@ describe("Data Test", () => {
           lock: false,
           recoveryRecord: false,
           solid: false,
-          volumn: false,
+          volume: false,
         },
       }, fileHeaders: [
         {
@@ -83,7 +83,7 @@ describe("Data Test", () => {
           lock: false,
           recoveryRecord: false,
           solid: false,
-          volumn: false,
+          volume: false,
         },
       }, fileHeaders: [
         {
@@ -146,7 +146,7 @@ describe("Data Test", () => {
           lock: false,
           recoveryRecord: false,
           solid: false,
-          volumn: false,
+          volume: false,
         },
       }, fileHeaders: [
         {

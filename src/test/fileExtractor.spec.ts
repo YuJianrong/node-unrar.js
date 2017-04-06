@@ -20,7 +20,7 @@ describe("File Test", () => {
           lock: false,
           recoveryRecord: false,
           solid: false,
-          volumn: false,
+          volume: false,
         },
       }, fileHeaders: [
         {
@@ -70,7 +70,7 @@ describe("File Test", () => {
           lock: false,
           recoveryRecord: false,
           solid: false,
-          volumn: false,
+          volume: false,
         },
       }, fileHeaders: [
         {

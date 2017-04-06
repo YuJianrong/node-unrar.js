@@ -90,7 +90,7 @@ export interface FileHeader {
 export interface ArcHeader {
   comment: string;
   flags: {
-    volumn: boolean,
+    volume: boolean,
     lock: boolean,
     solid: boolean,
     authInfo: boolean,
@@ -277,7 +277,7 @@ export abstract class Extractor {
         comment: header.comment,
         flags: {
           /* tslint:disable: no-bitwise */
-          volumn: (header.flags & 0x0001) !== 0,
+          volume: (header.flags & 0x0001) !== 0,
           lock: (header.flags & 0x0004) !== 0,
           solid: (header.flags & 0x0008) !== 0,
           authInfo: (header.flags & 0x0020) !== 0,
