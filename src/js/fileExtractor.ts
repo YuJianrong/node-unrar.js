@@ -1,9 +1,12 @@
 import * as fs from "fs";
+import * as path from "path";
+
 import { Extractor, SeekMethod } from "./extractor";
 import * as unrar from "./unrar";
 
 export class FileExtractor extends Extractor {
   protected _filePath: string;
+  private _target: string;
   private fileMap: {
     [fd: number]: {
       size: number;
@@ -11,10 +14,11 @@ export class FileExtractor extends Extractor {
       name: string;
     },
   };
-  constructor(filepath: string, password: string) {
+  constructor(filepath: string, targetPath: string, password: string) {
     super(password);
     this._filePath = filepath;
     this.fileMap = {};
+    this._target = targetPath;
   }
   protected open(filename: string): number {
     let fd = fs.openSync(filename, "r");
@@ -26,7 +30,25 @@ export class FileExtractor extends Extractor {
     return fd;
   }
   protected create(filename: string): number {
-    return 0;
+    let fullpath = path.join(this._target, filename);
+    let dir = path.parse(fullpath).dir;
+    dir
+      .split("/")
+      .reduce((path, folder) => {
+        path += folder + "/";
+        if (!fs.existsSync(path)) {
+          fs.mkdirSync(path);
+        }
+        return path;
+      }, "");
+
+    let fd = fs.openSync(fullpath, "w");
+    this.fileMap[fd] = {
+      size: 0,
+      pos: 0,
+      name: filename,
+    };
+    return fd;
   }
   protected closeFile(fd: number): Uint8Array | null {
     delete this.fileMap[fd];
@@ -42,7 +64,11 @@ export class FileExtractor extends Extractor {
     return readed;
   }
   protected write(fd: number, buf: any, size: number): boolean {
-    return true;
+    let file = this.fileMap[fd];
+    let writeNum = fs.writeSync(fd, new Buffer(unrar.HEAPU8.subarray(buf, buf + size)), 0 , size);
+    file.pos += writeNum;
+    file.size += writeNum;
+    return writeNum === size;
   }
   protected tell(fd: number): number {
     return this.fileMap[fd].pos;

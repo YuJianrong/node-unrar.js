@@ -1,5 +1,6 @@
 import * as assert from "assert";
 import * as fs from "fs";
+import * as shjs from "shelljs";
 import * as unrar from "../index";
 
 describe("File Test", () => {
@@ -55,7 +56,7 @@ describe("File Test", () => {
   });
 
   it("Header encryption with password", () => {
-    let extractor = unrar.createExtractorFromFile("./testFiles/HeaderEnc1234.rar", "1234");
+    let extractor = unrar.createExtractorFromFile("./testFiles/HeaderEnc1234.rar", "", "1234");
     let [state, list] = extractor.getFileList();
     assert.deepStrictEqual(state, {
       state: "SUCCESS",
@@ -102,6 +103,27 @@ describe("File Test", () => {
         },
       ],
     });
+  });
+
+  it("Extract File with folders", () => {
+    let extractor = unrar.createExtractorFromFile("./testFiles/FolderTest.rar", "./tmp/", "1234");
+    let [state, list] = extractor.extractAll();
+    assert.deepStrictEqual(state, { state: "SUCCESS" });
+
+    assert.deepStrictEqual(list!.files[0]!.fileHeader.name, "Folder1/Folder Space/long.txt");
+    assert.deepStrictEqual(list!.files[1]!.fileHeader.name, "Folder1/Folder 中文/2中文.txt");
+    assert.deepStrictEqual(list!.files[2]!.fileHeader.name, "Folder1/Folder Space");
+    assert.deepStrictEqual(list!.files[3]!.fileHeader.name, "Folder1/Folder 中文");
+    assert.deepStrictEqual(list!.files[4]!.fileHeader.name, "Folder1");
+
+    let long = "", i = 0;
+    while (long.length < 1024 * 1024) {
+      long += "1" + "0".repeat(i++);
+    }
+    assert.equal(fs.readFileSync("./tmp/Folder1/Folder Space/long.txt", "utf-8"), long);
+
+    shjs.rm("-rf", "./tmp");
+
   });
 
 });
