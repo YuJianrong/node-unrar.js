@@ -1,2 +1,2 @@
 export let RarArchive: any;
-export let HEAP8: any;
+export let HEAPU8: any;

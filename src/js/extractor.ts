@@ -113,7 +113,7 @@ export interface ArcFile {
 
 export interface ArcFiles {
   arcHeader: ArcHeader;
-  files: ArcFile[];
+  files: Array<ArcFile | null>;
 }
 
 export abstract class Extractor {
@@ -123,7 +123,7 @@ export abstract class Extractor {
   private _archive: any;
   private _lastFileContent: Uint8Array | null;
 
-  constructor(password: string) {
+  constructor(password: string = "") {
     this._password = password;
     this._archive = null;
   }
@@ -138,7 +138,7 @@ export abstract class Extractor {
       let fileState, arcFile;
       let fileHeaders: FileHeader[] = [];
       while (true) {
-        [fileState, arcFile] = this.processNextFile(() => ({ skip: true }));
+        [fileState, arcFile] = this.processNextFile(() => true);
         if (fileState.state !== "SUCCESS") {
           break;
         }
@@ -170,7 +170,7 @@ export abstract class Extractor {
       let fileState, arcFile;
       let files: ArcFile[] = [];
       while (true) {
-        [fileState, arcFile] = this.processNextFile(() => ({ skip: false }));
+        [fileState, arcFile] = this.processNextFile(() => false);
         if (fileState.state !== "SUCCESS") {
           break;
         }
@@ -184,6 +184,58 @@ export abstract class Extractor {
         }, {
           arcHeader: arcHeader!,
           files,
+        }];
+      }
+    }
+    this.closeArc();
+
+    return ret;
+  }
+
+  public extractFiles(files: string[], password?: string): Result<ArcFiles> {
+    let ret: Result<ArcFiles>;
+    let [state, arcHeader] = this.openArc(false, password);
+    let fileMap: { [index: string]: number } = {};
+    for (let i = 0; i < files.length; ++i) {
+      fileMap[files[i]] = i;
+    }
+    if (state.state !== "SUCCESS") {
+      ret = [state, null];
+    } else {
+      let fileState, arcFile;
+      let arcFiles: Array<ArcFile | null> = Array(files.length).fill(null);
+      let count = 0;
+      while (true) {
+        let skip = false, index: number | null = null;
+        [fileState, arcFile] = this.processNextFile((filename) => {
+          if (filename in fileMap) {
+            index = fileMap[filename];
+            return false;
+          } else {
+            skip = true;
+            return true;
+          }
+        });
+        if (fileState.state !== "SUCCESS") {
+          break;
+        }
+        if (!skip) {
+          arcFiles[index!] = arcFile;
+          count++;
+          if (count === files.length) {
+            (fileState as { reason: FailReason }).reason = "ERAR_END_ARCHIVE";
+            break;
+          }
+        }
+      }
+      if ((fileState as { reason: FailReason }).reason !== "ERAR_END_ARCHIVE") {
+        ret = [fileState, null];
+      } else {
+        ret = [{
+          state: "SUCCESS",
+        }, {
+          arcHeader: arcHeader!,
+          files: arcFiles,
         }];
       }
     }
@@ -209,11 +261,11 @@ export abstract class Extractor {
     return;
   }
 
-  private openArc(listOnly: boolean): Result<ArcHeader> {
+  private openArc(listOnly: boolean, password?: string): Result<ArcHeader> {
 
     extIns.current = this;
     this._archive = new unrar.RarArchive();
-    let header = this._archive.open(this._filePath, this._password, listOnly);
+    let header = this._archive.open(this._filePath, password ? password : this._password, listOnly);
     let ret: Result<ArcHeader>;
     if (header.state.errCode !== 0) {
       ret = [this.getFailInfo(header.state.errCode, header.state.errType), null];
@@ -239,7 +291,7 @@ export abstract class Extractor {
     return ret;
   }
 
-  private processNextFile(callback: (_: string) => ({ skip: boolean, password?: string })): Result<ArcFile> {
+  private processNextFile(callback: (_: string) => boolean): Result<ArcFile> {
 
     function getDateString(dosTime: number): string {
       const bitLen = [5, 6, 5, 5, 4, 7];
@@ -260,15 +312,15 @@ export abstract class Extractor {
     extIns.current = this;
     let ret: Result<ArcFile>;
     let arcFileHeader = this._archive.getFileHeader();
-    let extractInfo: Result<Uint8Array> = [{state: "SUCCESS"}, null];
+    let extractInfo: Result<Uint8Array> = [{ state: "SUCCESS" }, null];
     if (arcFileHeader.state.errCode === 0) {
-      let op = callback(arcFileHeader.name);
+      let skip = callback(arcFileHeader.name);
       this._lastFileContent = null;
-      let fileState = this._archive.readFile(op.skip, op.password || "");
-      if (fileState.errCode !== 0 && !op.skip) {
+      let fileState = this._archive.readFile(skip);
+      if (fileState.errCode !== 0 && !skip) {
         extractInfo[0] = this.getFailInfo(fileState.errCode, fileState.errType);
         if (fileState.errCode === 22) {
-          fileState = this._archive.readFile(true, "");
+          fileState = this._archive.readFile(true);
         } else {
           fileState.errCode = 0;
         }

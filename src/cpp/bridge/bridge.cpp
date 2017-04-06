@@ -9,13 +9,13 @@
 using namespace std;
 using namespace emscripten;
 
-static string callbackPassword;
+char callbackPassword[MAXPASSWORD] = "";
 
 int listCallback(UINT msg, LPARAM UserData, LPARAM P1, LPARAM P2)
 {
   if (msg == UCM_NEEDPASSWORD)
   {
-    strcpy((char *)P1, (char *)callbackPassword.c_str());
+    strcpy((char *)P1, callbackPassword);
   }
   return 1;
 };
@@ -64,7 +64,7 @@ public:
     hArcData = NULL;
   }
 
-  ArcHeader open(const wstring &filepath, const string &password, bool forList)
+  ArcHeader open(const wstring &filepath, const wstring &password, bool forList)
   {
     char CmtBuf[16384];
     struct RAROpenArchiveDataEx OpenArchiveData;
@@ -76,7 +76,7 @@ public:
     OpenArchiveData.Callback = listCallback;
     // OpenArchiveData.UserData = (LPARAM)password.c_str();
     OpenArchiveData.UserData = NULL;
-    callbackPassword = password;
+    WideToUtf(password.c_str(), callbackPassword, MAXPASSWORD);
 
     hArcData = RAROpenArchiveEx(&OpenArchiveData);
 
@@ -129,17 +129,10 @@ public:
     return header;
   }
 
-  State readFile(bool skip, const string &password)
+  State readFile(bool skip)
   {
     State state;
-    string oldPassword = callbackPassword;
-    if (password.size() != 0) {
-      callbackPassword = password;
-    }
     state.errCode = RARProcessFile(hArcData, skip ? RAR_SKIP : RAR_EXTRACT, NULL, NULL);
-    if (password.size() != 0) {
-      callbackPassword = oldPassword;
-    }
     state.errType = "ERR_PROCESS";
     return state;
   }

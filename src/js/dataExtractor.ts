@@ -48,7 +48,14 @@ export class DataExtractor extends Extractor {
     if (!fileData) {
       return null;
     }
-    return fileData.file.readAll();
+    let ret = fileData.file.readAll();
+    if (fd !== 1) {
+      delete this.dataFiles[this.dataFileMap[fd]];
+      delete this.dataFileMap[fd];
+    } else {
+      fileData.file.seek(0, "SET");
+    }
+    return ret;
   }
   protected read(fd: number, buf: any, size: number): number {
     let fileData = this.dataFiles[this.dataFileMap[fd]];
@@ -59,7 +66,7 @@ export class DataExtractor extends Extractor {
     if (data === null) {
       return -1;
     }
-    unrar.HEAP8.set(data, buf);
+    unrar.HEAPU8.set(data, buf);
     return data.byteLength;
   }
   protected write(fd: number, buf: any, size: number): boolean {
@@ -67,7 +74,7 @@ export class DataExtractor extends Extractor {
     if (!fileData) {
       return false;
     }
-    fileData.file.write(unrar.HEAP8.slice(buf, buf + size));
+    fileData.file.write(unrar.HEAPU8.slice(buf, buf + size));
     return true;
   }
   protected tell(fd: number): number {

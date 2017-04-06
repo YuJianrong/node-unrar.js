@@ -203,7 +203,7 @@ describe("Data Test", () => {
             state: "SUCCESS",
         });
         assert.notDeepEqual(list, null);
-        assert.deepStrictEqual(list!.files[0].fileHeader, {
+        assert.deepStrictEqual(list!.files[0]!.fileHeader, {
             name: "2中文.txt",
             flags: {
                 encrypted: true,
@@ -220,7 +220,7 @@ describe("Data Test", () => {
             fileAttr: 32,
         });
 
-        assert.deepStrictEqual(list!.files[1].fileHeader, {
+        assert.deepStrictEqual(list!.files[1]!.fileHeader, {
             name: "1File.txt",
             flags: {
                 encrypted: true,
@@ -237,11 +237,11 @@ describe("Data Test", () => {
             fileAttr: 32,
         });
 
-        assert.deepStrictEqual(list!.files[0].extract[0], { state: "SUCCESS" });
+        assert.deepStrictEqual(list!.files[0]!.extract[0], { state: "SUCCESS" });
 
-        assert.equal(new Buffer(list!.files[0].extract[1]!.subarray(0, 3)).toString("hex"), "efbbbf");
-        assert.equal(new Buffer(list!.files[0].extract[1]!.subarray(3)).toString("utf-8"), "中文中文");
-        assert.equal(new Buffer(list!.files[1].extract[1]!).toString("utf-8"), "1File");
+        assert.equal(new Buffer(list!.files[0]!.extract[1]!.subarray(0, 3)).toString("hex"), "efbbbf");
+        assert.equal(new Buffer(list!.files[0]!.extract[1]!.subarray(3)).toString("utf-8"), "中文中文");
+        assert.equal(new Buffer(list!.files[1]!.extract[1]!).toString("utf-8"), "1File");
 
     });
 
@@ -250,18 +250,18 @@ describe("Data Test", () => {
         let [state, list] = extractor.extractAll();
         assert.deepStrictEqual(state, { state: "SUCCESS" });
 
-        assert.deepStrictEqual(list!.files[0].extract[0], { state: "SUCCESS" });
-        assert.deepStrictEqual(new Buffer(list!.files[0].extract[1]!).toString("utf8"), "1File");
+        assert.deepStrictEqual(list!.files[0]!.extract[0], { state: "SUCCESS" });
+        assert.deepStrictEqual(new Buffer(list!.files[0]!.extract[1]!).toString("utf8"), "1File");
 
-        assert.deepStrictEqual(list!.files[1].extract[1], null);
-        assert.deepStrictEqual(list!.files[1].extract[0], {
+        assert.deepStrictEqual(list!.files[1]!.extract[1], null);
+        assert.deepStrictEqual(list!.files[1]!.extract[0], {
             msg: "Password for encrypted file or header is not specified",
             reason: "ERAR_MISSING_PASSWORD",
             state: "FAIL",
         });
 
-        assert.deepStrictEqual(list!.files[2].extract[1], null);
-        assert.deepStrictEqual(list!.files[2].extract[0], {
+        assert.deepStrictEqual(list!.files[2]!.extract[1], null);
+        assert.deepStrictEqual(list!.files[2]!.extract[0], {
             msg: "Password for encrypted file or header is not specified",
             reason: "ERAR_MISSING_PASSWORD",
             state: "FAIL",
@@ -275,18 +275,41 @@ describe("Data Test", () => {
 
         assert.deepStrictEqual(state, { state: "SUCCESS" });
 
-        assert.deepStrictEqual(list!.files[0].extract[0], { state: "SUCCESS" });
-        assert.deepStrictEqual(new Buffer(list!.files[0].extract[1]!).toString("utf8"), "1File");
+        assert.deepStrictEqual(list!.files[0]!.extract[0], { state: "SUCCESS" });
+        assert.deepStrictEqual(new Buffer(list!.files[0]!.extract[1]!).toString("utf8"), "1File");
 
-        assert.deepStrictEqual(list!.files[1].extract[1], null);
-        assert.deepStrictEqual(list!.files[1].extract[0], {
+        assert.deepStrictEqual(list!.files[1]!.extract[1], null);
+        assert.deepStrictEqual(list!.files[1]!.extract[0], {
             state: "FAIL",
             reason: "ERAR_BAD_DATA",
             msg: "Archive header or data are damaged",
         });
 
-        assert.deepStrictEqual(list!.files[2].extract[0], { state: "SUCCESS" });
-        assert.deepStrictEqual(new Buffer(list!.files[2].extract[1]!).toString("utf8"), "3Secc");
+        assert.deepStrictEqual(list!.files[2]!.extract[0], { state: "SUCCESS" });
+        assert.deepStrictEqual(new Buffer(list!.files[2]!.extract[1]!).toString("utf8"), "3Secc");
+
+    });
+
+    it("Extract File encrypted with different passwords (multiple passwords)", () => {
+        let extractor = getExtractor("FileEncByName.rar", "1234");
+        let [state, list] = extractor.extractFiles(["2中文.txt", "1File.txt"], "2中文");
+
+        assert.deepStrictEqual(state, { state: "SUCCESS" });
+
+        assert.deepStrictEqual(list!.files.length, 2);
+
+        assert.deepStrictEqual(list!.files[0]!.extract[0], { state: "SUCCESS" });
+        assert.equal(new Buffer(list!.files[0]!.extract[1]!.subarray(0, 3)).toString("hex"), "efbbbf");
+        assert.equal(new Buffer(list!.files[0]!.extract[1]!.subarray(3)).toString("utf-8"), "中文中文");
+
+        assert.deepStrictEqual(list!.files[1]!.extract[0], { state: "SUCCESS" });
+        assert.equal(new Buffer(list!.files[1]!.extract[1]!).toString("utf-8"), "1File");
+
+        [state, list] = extractor.extractFiles(["3Sec.txt", "haha.txt"], "3Sec");
+        assert.deepStrictEqual(list!.files[0]!.extract[0], { state: "SUCCESS" });
+        assert.equal(new Buffer(list!.files[0]!.extract[1]!).toString("utf-8"), "3Secc");
+
+        assert.deepStrictEqual(list!.files[1], null);
 
     });
 

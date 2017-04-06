@@ -37,7 +37,7 @@ export class FileExtractor extends Extractor {
     let file = this.fileMap[fd];
     let buffer = new Buffer(size);
     let readed = fs.readSync(fd, buffer, 0, size, file.pos);
-    unrar.HEAP8.set(buffer, buf);
+    unrar.HEAPU8.set(buffer, buf);
     file.pos += readed;
     return readed;
   }
