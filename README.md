@@ -1,7 +1,7 @@
-node-unrar.js
+node-unrar-js
 ======================
 [![Build Status](https://travis-ci.org/YuJianrong/node-unrar.js.svg?branch=master)](https://travis-ci.org/YuJianrong/node-unrar.js)
-[![npm version](https://badge.fury.io/js/node-unrar.js.svg)](https://badge.fury.io/js/node-unrar.js)
+[![npm version](https://badge.fury.io/js/node-unrar-js.svg)](https://badge.fury.io/js/node-unrar-js)
 [![MIT License](https://badges.frapsoft.com/os/mit/mit.svg?v=103)](https://opensource.org/licenses/mit-license.php)
 [![TypeScript](https://badges.frapsoft.com/typescript/code/typescript.svg?v=101)](https://www.typescriptlang.org/)
 
