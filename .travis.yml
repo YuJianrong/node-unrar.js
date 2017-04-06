@@ -3,7 +3,7 @@ language: node_js
 node_js:
 - '6'
 services:
-  - docker
+- docker
 before_install:
 - docker pull apiaryio/emcc
 - npm run prepare
@@ -12,13 +12,10 @@ before_script:
 script:
 - npm run buildRelease
 - npm run test
-# - npm run coverage
-# after_success: 
-# - ./node_modules/.bin/remap-istanbul -i coverage/coverage.json -t lcovonly | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage
 before_deply: npm run clean-test
 deploy:
   provider: npm
   skip_cleanup: true
-  email: "yujianrong@gmail.com"
+  email: yujianrong@gmail.com
   api_key:
-    secure: Ie2o0OvCXn2ZFmqB0y784DFmSiAwo/8r6falAuzsfmRsNXHWTofAFOFR0WCb3R+RxXAJGfGPhuyb56QEHENb3yV6RtNYR22hla5TlaVXhR/dLOaa2qfyyeaZ6YU5S510uURrTIbQLbtuTXDSb1NQnL3shRcH5ZefC/7mXCUQXowh4VfRxxABqnmuII67B+fPk/QrV1WlrOQ5b9Q7irIyJ1oDSEvkwhx3hKtXyVieLb23t2CqSZb4uUA3Avfa92e7GuiBF8HV2UvYuV0EoTR2IIUdRyiNdIwFu2tBkoat45hZoESXxwk+NYmLffcRGWLmvM6xuztk2PWoP/sWcpS2bvnXjn2hHSYlaFosf2HN8Q603UNI4dJH5WEk1WTk9yzBuHeC3KXRHOWIBFWAYOW+y4xKd51INYSFSeLxTX5XFSmgKJtCGr3E0dxcgJADE7f8jMKKEmUMZd6R6m1FheKk7i6aBd3NoREouonu/LI5sgdjlfzj99ba1REdpmNa1meBpSpNclpsQ/PVsvWxE6Ul4vB0nZsi0yQQN/QMeLfvJq88VSzwa9VJ3d5wkQN0zq41zVBeyM67mpGdffKKo+wBs1SJi2ZW+N46zRgK5xYBaS/2t8MEVXRmAh2iauWITVd3qy8JzqrBFg0OrR9SCmSIFT3PzSJNlpoxLJLQrsLVj78=
+    secure: aVIHmqus+DwsoaK0/EAYqWWy/IzbvlHoefCnrs3hLv5u1AdT1NrgwC5D14cproCSNB6UT+pPbQZpYonks/mgvGUTMV9nZFD7y385kXppe0/cglVYrWmsj5PlTW8L1AfznSpyogVKXXFzr5ogN6/xmHZKTwdq3EmhfU1y86e70lRzg/lZYNrAMEV7cnCZ15kmBSA/Io4a1DZuGTBSxKExWwWq4i+h/rq9hcUYThmnP8rIlVA6z1FLFdY2e8wLbLtMwgRPY5wqER4oFR/p5xRChTad9YsJyAuBw8J84CTdXbDjXzmZJ1gmxRszP4KCeOx40sxBJbQDgnc9TAA6T1mAVvcR+9mUCaSzFaMomf+uq7+3yupB0e9GuyftzgUZMX/lcI2iY4IVnGqxnbRG34DxQN/YXrgHSvmtQQdS7+E7+s5e+YXYlfKVDTyGU5NysircLutbzrqx03BD6ntM/vXA01gCDsqMqdXgBMYXmPKsoQtMGpBT0p6lHCxK/EHE78f+fqPl3nSjJ91pI4eLfErhJ6xwfa7ocAie74hL7pOx9FI9zfWJERzMf9i1p6DAD67R97uay8clk5QK/gD4MJrisYyAfGqxuhtlvG1aaJU6O6DJ8SxQxU/t7cJW0WvujcaisKTGn2qH9J8Lvr9WPjiZ1fvukMqqZkoxym9zpgunt30=
