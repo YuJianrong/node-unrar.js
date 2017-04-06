@@ -8,6 +8,8 @@ coverage
 dist/test
 dist/build
 dist_map
+testFiles
+UnRarDLL_Doc
 *.log
 .npmrc
 .vscode
