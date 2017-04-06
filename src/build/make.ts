@@ -74,7 +74,7 @@ shjs.exec([
   "-Wno-switch -Wno-dangling-else -Wno-logical-op-parentheses",
   "-DRARDLL",
   "-std=c++14",
-  // "-s ALLOW_MEMORY_GROWTH=1",
+  "-s ALLOW_MEMORY_GROWTH=1",
   "-s DISABLE_EXCEPTION_CATCHING=0",
   "--memory-init-file 0",
   release ? "-O3" : "-g4",

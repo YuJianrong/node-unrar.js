@@ -24,14 +24,12 @@ describe("File Test", () => {
       }, fileHeaders: [
         {
           crc: 0,
-          fileAttr: 32,
           flags: {
-            commented: false,
             directory: false,
             encrypted: false,
             solid: false,
           },
-          method: 48,
+          method: "Storing",
           name: "1File.txt",
           packSize: 0,
           time: "2017-04-03T10:41:42.000",
@@ -40,14 +38,12 @@ describe("File Test", () => {
         },
         {
           crc: 0,
-          fileAttr: 32,
           flags: {
-            commented: false,
             directory: false,
             encrypted: false,
             solid: false,
           },
-          method: 48,
+          method: "Storing",
           name: "2中文.txt",
           packSize: 0,
           time: "2017-04-03T10:41:52.000",
@@ -78,14 +74,12 @@ describe("File Test", () => {
       }, fileHeaders: [
         {
           crc: 2631402331,
-          fileAttr: 32,
           flags: {
-            commented: false,
             directory: false,
             encrypted: true,
             solid: false,
           },
-          method: 51,
+          method: "Normal",
           name: "2中文.txt",
           packSize: 32,
           time: "2017-04-03T20:09:18.000",
@@ -94,14 +88,12 @@ describe("File Test", () => {
         },
         {
           crc: 1468669977,
-          fileAttr: 32,
           flags: {
-            commented: false,
             directory: false,
             encrypted: true,
             solid: false,
           },
-          method: 51,
+          method: "Normal",
           name: "1File.txt",
           packSize: 32,
           time: "2017-04-03T20:08:44.000",

@@ -68,11 +68,12 @@ const ERROR_MSG: { [index: number]: string } = {
   24: "Wrong password is specified",
 };
 
+export type CompressMethod = "Storing" | "Fastest" | "Fast" | "Normal" | "Good" | "Best" | "Unknown";
+
 export interface FileHeader {
   name: string;
   flags: {
     encrypted: boolean,
-    commented: boolean,
     solid: boolean,
     directory: boolean,
   };
@@ -82,8 +83,8 @@ export interface FileHeader {
   crc: number;
   time: string;
   unpVer: string;
-  method: number;
-  fileAttr: number;
+  method: CompressMethod;
+  // fileAttr: number;
 }
 
 export interface ArcHeader {
@@ -309,6 +310,18 @@ export abstract class Extractor {
         `T${pad(parts[3])}:${pad(parts[4])}:${pad(parts[5] * 2)}.000`;
     }
 
+    function getMethod(method: number): CompressMethod {
+      let methodMap: {[index: number]: CompressMethod} = {
+        0x30: "Storing",
+        0x31: "Fastest",
+        0x32: "Fast",
+        0x33: "Normal",
+        0x34: "Good",
+        0x35: "Best",
+      };
+      return methodMap[method] || "Unknown";
+    }
+
     extIns.current = this;
     let ret: Result<ArcFile>;
     let arcFileHeader = this._archive.getFileHeader();
@@ -344,9 +357,8 @@ export abstract class Extractor {
           flags: {
             /* tslint:disable: no-bitwise */
             encrypted: (arcFileHeader.flags & 0x04) !== 0,
-            commented: (arcFileHeader.flags & 0x08) !== 0,
             solid: (arcFileHeader.flags & 0x10) !== 0,
-            directory: (arcFileHeader.flags & 0b11100000) === 0b11100000,
+            directory: (arcFileHeader.flags & 0x20) !== 0,
             /* tslint:enable: no-bitwise */
           },
           packSize: arcFileHeader.packSize,
@@ -355,8 +367,8 @@ export abstract class Extractor {
           crc: arcFileHeader.crc,
           time: getDateString(arcFileHeader.time),
           unpVer: `${Math.floor(arcFileHeader.unpVer / 10)}.${(arcFileHeader.unpVer % 10)}`,
-          method: arcFileHeader.method,
-          fileAttr: arcFileHeader.fileAttr,
+          method: getMethod(arcFileHeader.method),
+          // // fileAttr: arcFileHeader.fileAttr,
         },
         extract: extractInfo,
       }];
