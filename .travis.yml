@@ -5,7 +5,7 @@ node_js:
 services:
 - docker
 before_install:
-- docker pull apiaryio/emcc
+- docker pull apiaryio/emcc:1.36
 - npm run prepare
 before_script:
 - npm run clean
