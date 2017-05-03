@@ -5,6 +5,7 @@
 #include <string>
 // #include <wstring>
 #include <vector>
+#include <locale.h>
 
 using namespace std;
 using namespace emscripten;
@@ -54,6 +55,7 @@ class RarArchive
 public:
   RarArchive() : hArcData(NULL)
   {
+    setlocale(LC_ALL, "C.UTF-8");
   }
   ~RarArchive()
   {
