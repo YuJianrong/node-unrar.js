@@ -69,7 +69,7 @@ let extraFiles: string[] = [
 
 console.log(`Compile unrar`);
 shjs.exec([
-  "docker run --rm -v $(pwd):/src -t apiaryio/emcc emcc",
+  "docker run --rm -v $(pwd):/src -t apiaryio/emcc:1.37 emcc",
   "--bind",
   "-Wno-switch -Wno-dangling-else -Wno-logical-op-parentheses",
   "-DRARDLL",
