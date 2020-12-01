@@ -23,7 +23,9 @@ struct RAROpenArchiveDataEx
   unsigned int  Flags;
   UNRARCALLBACK Callback;
   LPARAM        UserData;
-  unsigned int  Reserved[28];
+  unsigned int  OpFlags;
+  wchar_t      *CmtBufW;
+  unsigned int  Reserved[25];
 };
 </pre>
 
@@ -101,25 +103,31 @@ function.</p>
 <li>
 <i>CmtBuf</i>
 <blockquote>
-  Input parameter which should point to the buffer for archive 
-  comments. Maximum comment size is limited to 64Kb. Comment text is 
-  zero terminated. If the comment text is larger than the buffer 
-  size, the comment text will be truncated. If CmtBuf is set to 
-  NULL, comments will not be read.
+  <p>Input parameter which should point to buffer for archive comment.
+  Comment text is zero terminated. If comment text is larger than 
+  buffer size, comment text is truncated.</p>
+  
+  <p>Comment is read in a native single byte encoding. If you need Unicode
+  comment, use CmtBufW.</p>
+
+  <p>Set to NULL if you do not need to read non-Unicode comment.</p>
 </blockquote>
 
 <li>
 <i>CmtBufSize</i>
 <blockquote>
-  Input parameter which should contain size of buffer for archive
-  comments.
+  Input parameter which should contain a size of buffer for archive comments.
+  Used either with CmtBuf or CmtBufW. Size is specified in characters,
+  which are a single byte for CmtBuf or wchar_t size for CmtBufW.
 </blockquote>
 
 <li>
 <i>CmtSize</i>
 <blockquote>
-  Output parameter containing size of comments actually read into the
-  buffer, cannot exceed CmtBufSize.
+  Output parameter containing a size of comment actually read into the buffer,
+  cannot exceed CmtBufSize.
+  Used either with CmtBuf or CmtBufW. Size is returned in characters,
+  which are a single byte for CmtBuf or wchar_t size for CmtBufW.
 </blockquote>
 
 <li>
@@ -141,20 +149,20 @@ function.</p>
 <li>
 <i>Flags</i>
 <blockquote>
-  <p>Output parameter. Combination of bit flags..</p>
+  <p>Output parameter. Combination of bit flags.</p>
 
   <p>Possible values:</p>
 
   <table border=1>
-  <tr><td> 0x0001 </td><td> Volume attribute (archive volume)</td></tr>
-  <tr><td> 0x0002 </td><td> Archive comment present</td></tr>
-  <tr><td> 0x0004 </td><td> Archive lock attribute</td></tr>
-  <tr><td> 0x0008 </td><td> Solid attribute (solid archive)</td></tr>
-  <tr><td> 0x0010 </td><td> New volume naming scheme ('volname.partN.rar')</td></tr>
-  <tr><td> 0x0020 </td><td> Authenticity information present</td></tr>
-  <tr><td> 0x0040 </td><td> Recovery record present</td></tr>
-  <tr><td> 0x0080 </td><td> Block headers are encrypted</td></tr>
-  <tr><td> 0x0100 </td><td> First volume (set only by RAR 3.0 and later)</td></tr>
+  <tr><td>ROADF_VOLUME</td><td> 0x0001 </td><td> Volume attribute (archive volume)</td></tr>
+  <tr><td>ROADF_COMMENT</td><td> 0x0002 </td><td> Archive comment present</td></tr>
+  <tr><td>ROADF_LOCK</td><td> 0x0004 </td><td> Archive lock attribute</td></tr>
+  <tr><td>ROADF_SOLID</td><td> 0x0008 </td><td> Solid attribute (solid archive)</td></tr>
+  <tr><td>ROADF_NEWNUMBERING</td><td> 0x0010 </td><td> New volume naming scheme ('volname.partN.rar')</td></tr>
+  <tr><td>ROADF_SIGNED</td><td> 0x0020 </td><td> Authenticity information present (obsolete)</td></tr>
+  <tr><td>ROADF_RECOVERY</td><td> 0x0040 </td><td> Recovery record present</td></tr>
+  <tr><td>ROADF_ENCHEADERS</td><td> 0x0080 </td><td> Block headers are encrypted</td></tr>
+  <tr><td>ROADF_FIRSTVOLUME</td><td> 0x0100 </td><td> First volume (set only by RAR 3.0 and later)</td></tr>
   </table>
 </blockquote>
 
@@ -176,7 +184,32 @@ function.</p>
 </blockquote>
 
 <li>
-<i>Reserved[28]</i>
+<i>OpFlags</i>
+<blockquote>
+  <p>Input parameter. Operation mode modifiers. Combination of bit flags.</p>
+
+  <p>Possible values:</p>
+
+  <table border=1>
+  <tr><td>ROADOF_KEEPBROKEN</td><td> 0x0001 </td><td>If set, extracted files with checksum errors are not deleted</td></tr>
+  </table>
+</blockquote>
+
+<li>
+<i>CmtBufW</i>
+<blockquote>
+  <p>Input parameter which should point to buffer for archive comment
+  in Unicode encoding. Comment text is zero terminated. If comment text
+  is larger than buffer size, comment text is truncated.</p>
+
+  <p>Set to NULL if you do not need to read Unicode comment.</p>
+
+  <p>If both CmtBuf and CmtBufW are not NULL, only CmtBufW comment is read.
+  If both CmtBuf and CmtBufW are NULL, archive comment is not read.</p>
+</blockquote>
+
+<li>
+<i>Reserved[25]</i>
 <blockquote>
   <p>Reserved for future use. Must be zero.</p>
 </blockquote>

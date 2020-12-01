@@ -9,7 +9,7 @@ enum { EXTRACT, TEST, PRINT, LIST };
 
 void ExtractArchive(char *ArcName,int Mode);
 void ListArchive(char *ArcName);
-void ShowComment(char *CmtBuf);
+void ShowComment(wchar_t *CmtBuf);
 void OutHelp(void);
 
 enum ERR_TYPE {ERR_OPEN, ERR_READ, ERR_PROCESS};
@@ -57,7 +57,7 @@ void ExtractArchive(char *ArcName,int Mode)
 {
   HANDLE hArcData;
   int RHCode,PFCode;
-  char CmtBuf[16384];
+  wchar_t CmtBuf[16384];
   struct RARHeaderData HeaderData;
   struct RAROpenArchiveDataEx OpenArchiveData;
 
@@ -65,8 +65,8 @@ void ExtractArchive(char *ArcName,int Mode)
   memset(&OpenArchiveData,0,sizeof(OpenArchiveData));
 
   OpenArchiveData.ArcName=ArcName;
-  OpenArchiveData.CmtBuf=CmtBuf;
-  OpenArchiveData.CmtBufSize=sizeof(CmtBuf);
+  OpenArchiveData.CmtBufW=CmtBuf;
+  OpenArchiveData.CmtBufSize=sizeof(CmtBuf)/sizeof(CmtBuf[0]);
   OpenArchiveData.OpenMode=RAR_OM_EXTRACT;
   OpenArchiveData.Callback=CallbackProc;
   OpenArchiveData.UserData=Mode;
@@ -118,7 +118,7 @@ void ListArchive(char *ArcName)
 {
   HANDLE hArcData;
   int RHCode,PFCode;
-  char CmtBuf[16384];
+  wchar_t CmtBuf[16384];
   struct RARHeaderDataEx HeaderData;
   struct RAROpenArchiveDataEx OpenArchiveData;
   wchar_t RedirName[1024];
@@ -126,8 +126,8 @@ void ListArchive(char *ArcName)
   memset(&HeaderData,0,sizeof(HeaderData));
   memset(&OpenArchiveData,0,sizeof(OpenArchiveData));
   OpenArchiveData.ArcName=ArcName;
-  OpenArchiveData.CmtBuf=CmtBuf;
-  OpenArchiveData.CmtBufSize=sizeof(CmtBuf);
+  OpenArchiveData.CmtBufW=CmtBuf;
+  OpenArchiveData.CmtBufSize=sizeof(CmtBuf)/sizeof(CmtBuf[0]);
   OpenArchiveData.OpenMode=RAR_OM_LIST;
   OpenArchiveData.Callback=CallbackProc;
   OpenArchiveData.UserData=LIST;
@@ -174,9 +174,9 @@ void ListArchive(char *ArcName)
 }
 
 
-void ShowComment(char *CmtBuf)
+void ShowComment(wchar_t *CmtBuf)
 {
-  printf("\nComment:\n%s\n",CmtBuf);
+  printf("\nComment:\n%ls\n",CmtBuf);
 }
 
 

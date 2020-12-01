@@ -4,6 +4,25 @@ the same source code. So the latest version of unrar.dll usually contains
 same decompression algorithm changes as the latest UnRAR version.
 ============================================================================
 
+-- 2 February 2019
+
+New CmtBufW field of RAROpenArchiveDataEx structure allows to read
+the archive comment in Unicode.
+
+
+-- 10 January 2019
+
+New OpFlags field and ROADOF_KEEPBROKEN flag in RAROpenArchiveDataEx structure
+to specify if extracted files with invalid checksum shall be preserved.
+Reserved[28] in the same structure is changed to Reserved[27].
+
+
+--  3 October 2018
+
+UnpVer field of RARHeaderData and RARHeaderDataEx structures erroneously
+returned 200 instead of 50 for RAR 5.0 archives. Fixed now.
+
+
 --  17 September 2016
 
 New MtimeLow, MtimeHigh, CtimeLow, CtimeHigh, AtimeLow, AtimeHigh fields
