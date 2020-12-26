@@ -76,6 +76,7 @@ shjs.exec([
   "-std=c++14",
   "-s ALLOW_MEMORY_GROWTH=1",
   "-s DISABLE_EXCEPTION_CATCHING=0",
+  "-s MODULARIZE=1",
   "--memory-init-file 0",
   release ? "-O3" : "-g4",
   "--js-library ./src/cpp/bridge/bridge.js",

@@ -2,7 +2,7 @@ import * as fs from "fs";
 import * as path from "path";
 
 import { Extractor, SeekMethod } from "./extractor";
-import * as unrar from "./unrar";
+import unrar from "./unrarSingleton";
 
 export class FileExtractor extends Extractor {
   protected _filePath: string;

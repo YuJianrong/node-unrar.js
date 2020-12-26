@@ -1,6 +1,6 @@
 
 import { Ext as extIns } from "./extractorCurrent";
-import * as unrar from "./unrar";
+import unrar from "./unrarSingleton";
 
 export type SeekMethod = "CUR" | "SET" | "END";
 

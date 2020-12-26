@@ -1,6 +1,6 @@
 import {DataFile} from "./dataFile";
 import {Extractor, SeekMethod} from "./extractor";
-import * as unrar from "./unrar";
+import unrar from "./unrarSingleton";
 
 export class DataExtractor extends Extractor {
   protected _filePath: string;
