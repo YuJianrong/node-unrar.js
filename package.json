@@ -14,7 +14,7 @@
     "test": "mocha dist/test/*.spec.js",
     "clean": "rm -rf dist; rm -rf coverage; rm -rf dist_map",
     "clean-test": "rm -rf dist/test dist/build",
-    "tslint": "tslint --project='tsconfig.json'",
+    "tslint": "tslint --project tsconfig.json",
     "tsc": "tsc",
     "buildDebug": "tsc && node ./dist/build/make.js",
     "prebuildRelease": "npm run tslint",
