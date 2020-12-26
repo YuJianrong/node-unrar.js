@@ -8,6 +8,7 @@
         "object-literal-sort-keys": false,
         "no-unused-expression": false,
         "prefer-const": false,
+        "no-shadowed-variable": false,
         "variable-name": false
     }
 }
