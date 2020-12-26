@@ -145,15 +145,16 @@ export abstract class Extractor {
         }
         fileHeaders.push(arcFile!.fileHeader);
       }
+      let extracted = {
+        arcHeader: arcHeader!,
+        fileHeaders,
+      };
       if ((fileState as { reason: FailReason }).reason !== "ERAR_END_ARCHIVE") {
-        ret = [fileState, null];
+        ret = [fileState, extracted];
       } else {
         ret = [{
           state: "SUCCESS",
-        }, {
-          arcHeader: arcHeader!,
-          fileHeaders,
-        }];
+        }, extracted];
       }
     }
     this.closeArc();
