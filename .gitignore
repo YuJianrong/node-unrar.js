@@ -32,3 +32,5 @@ umd
 src/cpp/unrar
 .vscode
 .npmrc
+
+.DS_Store

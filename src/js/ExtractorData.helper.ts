@@ -1,4 +1,4 @@
-import {SeekMethod} from "./extractor";
+import { SeekMethod } from './Extractor';
 
 export class DataFile {
   private buffers: Uint8Array[];
@@ -20,7 +20,7 @@ export class DataFile {
       // size = this.size - this.pos;
       return null;
     }
-    let oldPos = this.pos;
+    const oldPos = this.pos;
     this.pos += size;
     // return this.buffers[0].subarray(oldPos, this.pos);
     return this.buffers[0].slice(oldPos, this.pos);
@@ -40,9 +40,9 @@ export class DataFile {
   }
   public seek(pos: number, method: SeekMethod): boolean {
     let newPos = this.pos;
-    if (method === "SET") {
+    if (method === 'SET') {
       newPos = pos;
-    } else if (method === "CUR") {
+    } else if (method === 'CUR') {
       newPos += pos;
     } else {
       newPos = this.size - pos;
@@ -57,9 +57,9 @@ export class DataFile {
     if (this.buffers.length <= 1) {
       return;
     }
-    let newBuffer = new Uint8Array(this.size);
+    const newBuffer = new Uint8Array(this.size);
     let offset = 0;
-    for (let buffer of this.buffers) {
+    for (const buffer of this.buffers) {
       newBuffer.set(buffer, offset);
       offset += buffer.byteLength;
     }

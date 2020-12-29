@@ -1,64 +1,64 @@
 #include "../unrar/rar.hpp"
 #include <string>
 
-extern "C" {
+extern "C"
+{
   extern FileHandle jsOpen(const wchar *);
   extern FileHandle jsCreate(const wchar *);
   extern void jsClose(FileHandle);
-  extern int jsRead(FileHandle, void*, size_t);
-  extern bool jsWrite(FileHandle, const void*, size_t);
+  extern int jsRead(FileHandle, void *, size_t);
+  extern bool jsWrite(FileHandle, const void *, size_t);
   extern int64 jsTell(FileHandle);
-  extern bool jsSeek(FileHandle, long, const char*);
+  extern bool jsSeek(FileHandle, int64, const char *);
 }
-
 
 File::File()
 {
-  hFile=FILE_BAD_HANDLE;
-  *FileName=0;
-  NewFile=false;
-  LastWrite=false;
-  HandleType=FILE_HANDLENORMAL;
-  SkipClose=false;
-  IgnoreReadErrors=false;
-  ErrorType=FILE_SUCCESS;
-  OpenShared=false;
-  AllowDelete=true;
-  AllowExceptions=true;
+  hFile = FILE_BAD_HANDLE;
+  *FileName = 0;
+  NewFile = false;
+  LastWrite = false;
+  HandleType = FILE_HANDLENORMAL;
+  SkipClose = false;
+  ErrorType = FILE_SUCCESS;
+  OpenShared = false;
+  AllowDelete = true;
+  AllowExceptions = true;
+  PreserveAtime = false;
+  ReadErrorMode = FREM_ASK;
+  TruncatedAfterReadError = false;
 }
-
 
 File::~File()
 {
-  if (hFile!=FILE_BAD_HANDLE && !SkipClose)
+  if (hFile != FILE_BAD_HANDLE && !SkipClose)
     if (NewFile)
       Delete();
     else
       Close();
 }
 
-
-void File::operator = (File &SrcFile)
+void File::operator=(File &SrcFile)
 {
-  hFile=SrcFile.hFile;
-  NewFile=SrcFile.NewFile;
-  LastWrite=SrcFile.LastWrite;
-  HandleType=SrcFile.HandleType;
-  wcsncpyz(FileName,SrcFile.FileName,ASIZE(FileName));
-  SrcFile.SkipClose=true;
+  hFile = SrcFile.hFile;
+  NewFile = SrcFile.NewFile;
+  LastWrite = SrcFile.LastWrite;
+  HandleType = SrcFile.HandleType;
+  TruncatedAfterReadError = SrcFile.TruncatedAfterReadError;
+  wcsncpyz(FileName, SrcFile.FileName, ASIZE(FileName));
+  SrcFile.SkipClose = true;
 }
 
-
-bool File::Open(const wchar *Name,uint Mode)
+bool File::Open(const wchar *Name, uint Mode)
 {
-  ErrorType=FILE_SUCCESS;
+  ErrorType = FILE_SUCCESS;
   FileHandle hNewFile;
-  bool OpenShared=File::OpenShared || (Mode & FMF_OPENSHARED)!=0;
-  bool UpdateMode=(Mode & FMF_UPDATE)!=0;
-  bool WriteMode=(Mode & FMF_WRITE)!=0;
-  int flags=UpdateMode ? O_RDWR:(WriteMode ? O_WRONLY:O_RDONLY);
+  bool OpenShared = File::OpenShared || (Mode & FMF_OPENSHARED) != 0;
+  bool UpdateMode = (Mode & FMF_UPDATE) != 0;
+  bool WriteMode = (Mode & FMF_WRITE) != 0;
+  int flags = UpdateMode ? O_RDWR : (WriteMode ? O_WRONLY : O_RDONLY);
   char NameA[NM];
-  WideToChar(Name,NameA,ASIZE(NameA));
+  WideToChar(Name, NameA, ASIZE(NameA));
 
   // int handle=open(NameA,flags);
   // if (handle==-1)
@@ -67,30 +67,29 @@ bool File::Open(const wchar *Name,uint Mode)
   // {
   //   hNewFile=fdopen(handle,UpdateMode ? UPDATEBINARY:READBINARY);
   // }
+
   hNewFile = jsOpen(Name);
-  if (hNewFile==FILE_BAD_HANDLE && errno==ENOENT)
-    ErrorType=FILE_NOTFOUND;
-  NewFile=false;
-  HandleType=FILE_HANDLENORMAL;
-  SkipClose=false;
-  bool Success=hNewFile!=FILE_BAD_HANDLE;
+
+  if (hNewFile == FILE_BAD_HANDLE && errno == ENOENT)
+    ErrorType = FILE_NOTFOUND;
+  NewFile = false;
+  HandleType = FILE_HANDLENORMAL;
+  SkipClose = false;
+  bool Success = hNewFile != FILE_BAD_HANDLE;
   if (Success)
   {
-    hFile=hNewFile;
-    wcsncpyz(FileName,Name,ASIZE(FileName));
+    hFile = hNewFile;
+    wcsncpyz(FileName, Name, ASIZE(FileName));
+    TruncatedAfterReadError = false;
   }
   return Success;
 }
 
-
-#if !defined(SHELL_EXT) && !defined(SFX_MODULE)
 void File::TOpen(const wchar *Name)
 {
   if (!WOpen(Name))
     ErrHandler.Exit(RARX_OPEN);
 }
-#endif
-
 
 bool File::WOpen(const wchar *Name)
 {
@@ -100,49 +99,44 @@ bool File::WOpen(const wchar *Name)
   return false;
 }
 
-
-bool File::Create(const wchar *Name,uint Mode)
+bool File::Create(const wchar *Name, uint Mode)
 {
   // OpenIndiana based NAS and CIFS shares fail to set the file time if file
   // was created in read+write mode and some data was written and not flushed
   // before SetFileTime call. So we should use the write only mode if we plan
   // SetFileTime call and do not need to read from file.
-  bool WriteMode=(Mode & FMF_WRITE)!=0;
+  bool WriteMode = (Mode & FMF_WRITE) != 0;
+  bool ShareRead = (Mode & FMF_SHAREREAD) != 0 || File::OpenShared;
   char NameA[NM];
-  WideToChar(Name,NameA,ASIZE(NameA));
+  WideToChar(Name, NameA, ASIZE(NameA));
   // hFile=fopen(NameA,WriteMode ? WRITEBINARY:CREATEBINARY);
-  hFile=jsCreate(Name);
-  NewFile=true;
-  HandleType=FILE_HANDLENORMAL;
-  SkipClose=false;
-  wcsncpyz(FileName,Name,ASIZE(FileName));
-  return hFile!=FILE_BAD_HANDLE;
+  hFile = jsCreate(Name);
+  NewFile = true;
+  HandleType = FILE_HANDLENORMAL;
+  SkipClose = false;
+  wcsncpyz(FileName, Name, ASIZE(FileName));
+  return hFile != FILE_BAD_HANDLE;
 }
 
-
-#if !defined(SHELL_EXT) && !defined(SFX_MODULE)
-void File::TCreate(const wchar *Name,uint Mode)
+void File::TCreate(const wchar *Name, uint Mode)
 {
-  if (!WCreate(Name,Mode))
+  if (!WCreate(Name, Mode))
     ErrHandler.Exit(RARX_FATAL);
 }
-#endif
 
-
-bool File::WCreate(const wchar *Name,uint Mode)
+bool File::WCreate(const wchar *Name, uint Mode)
 {
-  if (Create(Name,Mode))
+  if (Create(Name, Mode))
     return true;
   ErrHandler.CreateErrorMsg(Name);
   return false;
 }
 
-
 bool File::Close()
 {
-  bool Success=true;
+  bool Success = true;
 
-  if (hFile!=FILE_BAD_HANDLE)
+  if (hFile != FILE_BAD_HANDLE)
   {
     if (!SkipClose)
     {
@@ -150,32 +144,29 @@ bool File::Close()
       jsClose(hFile);
       Success = true;
     }
-    hFile=FILE_BAD_HANDLE;
+    hFile = FILE_BAD_HANDLE;
   }
-  HandleType=FILE_HANDLENORMAL;
+  HandleType = FILE_HANDLENORMAL;
   if (!Success && AllowExceptions)
     ErrHandler.CloseError(FileName);
   return Success;
 }
 
-
 bool File::Delete()
 {
-  return DelFile(FileName);
+  return false;
 }
-
 
 bool File::Rename(const wchar *NewName)
 {
+  // No need to rename if names are already same.
   return true;
 }
 
-
-bool File::Write(const void *Data,size_t Size)
+bool File::Write(const void *Data, size_t Size)
 {
-  if (Size==0)
+  if (Size == 0)
     return true;
-  return jsWrite(hFile, Data,Size);
   // if (HandleType==FILE_HANDLESTD)
   // {
   //   // Cannot use the standard stdout here, because it already has wide orientation.
@@ -202,94 +193,99 @@ bool File::Write(const void *Data,size_t Size)
   //   }
   //   break;
   // }
-  // LastWrite=true;
-  // return Success; // It can return false only if AllowExceptions is disabled.
+  bool Success = jsWrite(hFile, Data, Size);
+  LastWrite = true;
+  return Success; // It can return false only if AllowExceptions is disabled.
 }
 
-
-int File::Read(void *Data,size_t Size)
+int File::Read(void *Data, size_t Size)
 {
-  int64 FilePos=0; // Initialized only to suppress some compilers warning.
+  if (TruncatedAfterReadError)
+    return 0;
 
-  if (IgnoreReadErrors)
-    FilePos=Tell();
+  int64 FilePos = 0; // Initialized only to suppress some compilers warning.
+
+  if (ReadErrorMode == FREM_IGNORE)
+    FilePos = Tell();
   int ReadSize;
   while (true)
   {
-    ReadSize=DirectRead(Data,Size);
-    if (ReadSize==-1)
+    ReadSize = DirectRead(Data, Size);
+    if (ReadSize == -1)
     {
-      ErrorType=FILE_READERROR;
+      ErrorType = FILE_READERROR;
       if (AllowExceptions)
-        if (IgnoreReadErrors)
+        if (ReadErrorMode == FREM_IGNORE)
         {
-          ReadSize=0;
-          for (size_t I=0;I<Size;I+=512)
+          ReadSize = 0;
+          for (size_t I = 0; I < Size; I += 512)
           {
-            Seek(FilePos+I,SEEK_SET);
-            size_t SizeToRead=Min(Size-I,512);
-            int ReadCode=DirectRead(Data,SizeToRead);
-            ReadSize+=(ReadCode==-1) ? 512:ReadCode;
+            Seek(FilePos + I, SEEK_SET);
+            size_t SizeToRead = Min(Size - I, 512);
+            int ReadCode = DirectRead(Data, SizeToRead);
+            ReadSize += (ReadCode == -1) ? 512 : ReadCode;
           }
         }
         else
         {
-          if (HandleType==FILE_HANDLENORMAL && ErrHandler.AskRepeatRead(FileName))
-            continue;
+          bool Ignore = false, Retry = false, Quit = false;
+          if (ReadErrorMode == FREM_ASK && HandleType == FILE_HANDLENORMAL)
+          {
+            ErrHandler.AskRepeatRead(FileName, Ignore, Retry, Quit);
+            if (Retry)
+              continue;
+          }
+          if (Ignore || ReadErrorMode == FREM_TRUNCATE)
+          {
+            TruncatedAfterReadError = true;
+            return 0;
+          }
           ErrHandler.ReadError(FileName);
         }
     }
     break;
   }
-  return ReadSize;
+  return ReadSize; // It can return -1 only if AllowExceptions is disabled.
 }
 
-
 // Returns -1 in case of error.
-int File::DirectRead(void *Data,size_t Size)
+int File::DirectRead(void *Data, size_t Size)
 {
-  if (HandleType==FILE_HANDLESTD)
-  {
-    hFile=stdin;
-  }
   if (LastWrite)
   {
     // fflush(hFile);
-    LastWrite=false;
+    LastWrite = false;
   }
   // clearerr(hFile);
   // size_t ReadSize=fread(Data,1,Size,hFile);
   // if (ferror(hFile))
-    // return -1;
+  // return -1;
   // return (int)ReadSize;
-  return jsRead(hFile,Data,Size);
+  return jsRead(hFile, Data, Size);
 }
 
-
-void File::Seek(int64 Offset,int Method)
+void File::Seek(int64 Offset, int Method)
 {
-  if (!RawSeek(Offset,Method) && AllowExceptions)
+  if (!RawSeek(Offset, Method) && AllowExceptions)
     ErrHandler.SeekError(FileName);
 }
 
-
-bool File::RawSeek(int64 Offset,int Method)
+bool File::RawSeek(int64 Offset, int Method)
 {
-  if (hFile==FILE_BAD_HANDLE)
+  if (hFile == FILE_BAD_HANDLE)
     return true;
-  if (Offset<0 && Method!=SEEK_SET)
+  if (Offset < 0 && Method != SEEK_SET)
   {
-    Offset=(Method==SEEK_CUR ? Tell():FileLength())+Offset;
-    Method=SEEK_SET;
+    Offset = (Method == SEEK_CUR ? Tell() : FileLength()) + Offset;
+    Method = SEEK_SET;
   }
-  LastWrite=false;
-  return jsSeek(hFile,(long)Offset, Method == SEEK_CUR ? "CUR" : Method == SEEK_SET ? "SET" : "END" );
+  LastWrite = false;
+  return jsSeek(hFile, Offset, Method == SEEK_CUR ? "CUR" : Method == SEEK_SET ? "SET" : "END");
 }
-
 
 int64 File::Tell()
 {
-  if (hFile==FILE_BAD_HANDLE)
+  if (hFile == FILE_BAD_HANDLE)
     if (AllowExceptions)
       ErrHandler.SeekError(FileName);
     else
@@ -297,83 +293,62 @@ int64 File::Tell()
   return jsTell(hFile);
 }
 
-
 void File::Prealloc(int64 Size)
 {
-// #if defined(_UNIX) && defined(USE_FALLOCATE)
-//   // fallocate is rather new call. Only latest kernels support it.
-//   // So we are not using it by default yet.
-//   int fd = GetFD();
-//   if (fd >= 0)
-//     fallocate(fd, 0, 0, Size);
-// #endif
 }
-
 
 byte File::GetByte()
 {
-  byte Byte=0;
-  Read(&Byte,1);
+  byte Byte = 0;
+  Read(&Byte, 1);
   return Byte;
 }
 
-
 void File::PutByte(byte Byte)
 {
-  Write(&Byte,1);
+  Write(&Byte, 1);
 }
-
 
 bool File::Truncate()
 {
   return true;
 }
 
-
 void File::Flush()
 {
 }
 
-
-void File::SetOpenFileTime(RarTime *ftm,RarTime *ftc,RarTime *fta)
+void File::SetOpenFileTime(RarTime *ftm, RarTime *ftc, RarTime *fta)
 {
 }
 
-
-void File::SetCloseFileTime(RarTime *ftm,RarTime *fta)
-{
-  // SetCloseFileTimeByName(FileName,ftm,fta);
-}
-
-
-void File::SetCloseFileTimeByName(const wchar *Name,RarTime *ftm,RarTime *fta)
+void File::SetCloseFileTime(RarTime *ftm, RarTime *fta)
 {
 }
 
+void File::SetCloseFileTimeByName(const wchar *Name, RarTime *ftm, RarTime *fta)
+{
+}
 
 void File::GetOpenFileTime(RarTime *ft)
 {
 }
 
-
 int64 File::FileLength()
 {
-  
-  SaveFilePos SavePos(*this);
-  Seek(0,SEEK_END);
-  return Tell();
+  int64 SavePos = Tell();
+  Seek(0, SEEK_END);
+  int64 Length = Tell();
+  Seek(SavePos, SEEK_SET);
+  return Length;
 }
-
 
 bool File::IsDevice()
 {
   return false;
 }
 
-
-#ifndef SFX_MODULE
-int64 File::Copy(File &Dest,int64 Length)
+int64 File::Copy(File &Dest, int64 Length)
 {
   return 0;
 }
-#endif

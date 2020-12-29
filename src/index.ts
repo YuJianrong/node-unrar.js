@@ -1,1 +1,1 @@
-export * from "./js/extractorFactory";
+export * from './js/extractorFactory';

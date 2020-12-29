@@ -1,6 +1,6 @@
 {
   "name": "node-unrar-js",
-  "version": "0.8.1",
+  "version": "1.0.0",
   "description": "Pure JavaScript RAR archive extractor by compile the official unrar lib by Emscripten.",
   "homepage": "https://github.com/YuJianrong/node-unrar.js",
   "bugs": {
@@ -10,19 +10,16 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "prepare": "wget http://www.rarlab.com/rar/unrarsrc-5.4.5.tar.gz && tar -xf unrarsrc-5.4.5.tar.gz -C src/cpp && rm unrarsrc-5.4.5.tar.gz",
-    "test": "mocha dist/test/*.spec.js",
+    "prepare": "wget http://www.rarlab.com/rar/unrarsrc-6.0.2.tar.gz && tar -xf unrarsrc-6.0.2.tar.gz -C src/cpp && rm unrarsrc-6.0.2.tar.gz",
     "clean": "rm -rf dist; rm -rf coverage; rm -rf dist_map",
-    "clean-test": "rm -rf dist/test dist/build",
-    "tslint": "tslint --project='tsconfig.json'",
+    "clean:test": "rm -rf dist/test dist/build",
+    "lint": "eslint './src/**/*.ts' --max-warnings 0",
     "tsc": "tsc",
     "buildDebug": "tsc && node ./dist/build/make.js",
-    "prebuildRelease": "npm run tslint",
+    "prebuildRelease": "npm run lint",
     "buildRelease": "npm run clean && tsc && node ./dist/build/make.js release",
-    "debug": "npm run test -- --debug-brk --inspect",
-
-    "coverage": "tsc --sourceMap --outDir dist_map && istanbul cover node_modules/.bin/_mocha -- dist_map/test/*.spec.js",
-    "browserify": "mkdir umd; browserify dist/index.js -s array-diff -o umd/array-diff.js"
+    "test": "mocha dist/test/*.spec.js",
+    "test:debug": "npm run test -- --inspect-brk"
   },
   "keywords": [
     "unrar"
@@ -30,11 +27,32 @@
   "author": "Jianrong Yu <yujianrong@gmail.com>",
   "license": "MIT",
   "devDependencies": {
-    "@types/mocha": "^2.2.40",
-    "@types/shelljs": "^0.7.0",
-    "mocha": "^3.2.0",
-    "shelljs": "^0.7.7",
-    "tslint": "^5.0.0",
-    "typescript": "^2.2.2"
+    "@types/mocha": "^8.2.0",
+    "@types/shelljs": "^0.8.8",
+    "@typescript-eslint/eslint-plugin": "^4.11.1",
+    "@typescript-eslint/parser": "^4.11.1",
+    "eslint": "^7.16.0",
+    "eslint-config-prettier": "^7.1.0",
+    "eslint-plugin-prettier": "^3.3.0",
+    "husky": "^4.3.6",
+    "lint-staged": "^10.5.3",
+    "mocha": "^8.2.1",
+    "prettier": "^2.2.1",
+    "shelljs": "^0.8.4",
+    "typescript": "^4.1.3"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "pre-push": "npm run lint"
+    }
+  },
+  "lint-staged": {
+    "*.{json,md,less,yaml,yml}": [
+      "prettier --write"
+    ],
+    "*.{ts,tsx}": [
+      "eslint --fix --max-warnings 0"
+    ]
   }
 }

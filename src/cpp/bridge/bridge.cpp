@@ -3,7 +3,6 @@
 #include <emscripten.h>
 #include <emscripten/bind.h>
 #include <string>
-// #include <wstring>
 #include <vector>
 #include <locale.h>
 
@@ -68,16 +67,17 @@ public:
 
   ArcHeader open(const wstring &filepath, const wstring &password, bool forList)
   {
-    char CmtBuf[16384];
+    wchar_t CmtBuf[16384];
     struct RAROpenArchiveDataEx OpenArchiveData;
     memset(&OpenArchiveData, 0, sizeof(OpenArchiveData));
     OpenArchiveData.ArcNameW = (wchar_t *)filepath.c_str();
-    OpenArchiveData.CmtBuf = CmtBuf;
-    OpenArchiveData.CmtBufSize = sizeof(CmtBuf);
+    OpenArchiveData.CmtBufW = CmtBuf;
+    OpenArchiveData.CmtBufSize = sizeof(CmtBuf) / sizeof(CmtBuf[0]);
     OpenArchiveData.OpenMode = forList ? RAR_OM_LIST : RAR_OM_EXTRACT;
     OpenArchiveData.Callback = listCallback;
     // OpenArchiveData.UserData = (LPARAM)password.c_str();
     OpenArchiveData.UserData = NULL;
+    OpenArchiveData.OpFlags = ROADOF_KEEPBROKEN;
     WideToUtf(password.c_str(), callbackPassword, MAXPASSWORD);
 
     hArcData = RAROpenArchiveEx(&OpenArchiveData);
@@ -97,9 +97,7 @@ public:
     header.flags = OpenArchiveData.Flags;
     if (OpenArchiveData.CmtState == 1)
     {
-      Array<wchar_t> WcmtBuf(OpenArchiveData.CmtSize);
-      CharToWide(CmtBuf, &WcmtBuf[0], WcmtBuf.Size() * sizeof(wchar_t));
-      header.comment = &WcmtBuf[0];
+      header.comment = CmtBuf;
     }
     return header;
   }
@@ -146,16 +144,14 @@ private:
 EMSCRIPTEN_BINDINGS(stl_wrappers)
 {
   class_<RarArchive>("RarArchive")
-    .constructor< >()
-    .function("open" , &RarArchive::open)
-    .function("getFileHeader" , &RarArchive::getFileHeader)
-    .function("readFile" , &RarArchive::readFile)
-    ;
+      .constructor<>()
+      .function("open", &RarArchive::open)
+      .function("getFileHeader", &RarArchive::getFileHeader)
+      .function("readFile", &RarArchive::readFile);
 
   value_object<State>("State")
       .field("errCode", &State::errCode)
-      .field("errType", &State::errType)
-      ;
+      .field("errType", &State::errType);
 
   value_object<ArcHeader>("ArcHeader")
       .field("state", &ArcHeader::state)
