@@ -1,8 +1,9 @@
 import * as shjs from 'shelljs';
 
 const release = process.argv.indexOf('release') !== -1;
+const esm = process.argv.indexOf('esm') !== -1;
 
-console.log('start Emscripten building');
+console.log(`start Emscripten building ${release ? 'release' : ''} ${esm ? 'esm' : ''}`);
 
 const unrarFiles: string[] = [
   'dll',
@@ -71,8 +72,7 @@ shjs.exec(
     '-std=c++17',
     '-s MODULARIZE',
     '-s ALLOW_MEMORY_GROWTH=1',
-    // '-s EXPORT_ES6=1',
-    // '-s USE_ES6_IMPORT_META=0',
+    esm ? '-s EXPORT_ES6=1 -s USE_ES6_IMPORT_META=0' : '',
     '-s FILESYSTEM=0',
     '-s DISABLE_EXCEPTION_CATCHING=0',
     '-s FETCH_SUPPORT_INDEXEDDB=0',
@@ -82,7 +82,7 @@ shjs.exec(
     release ? '-O3' : '-g3',
     // release ? '' : '--source-map-base ./dist/js/',
     '--js-library ./src/cpp/bridge/bridge.js',
-    '-o ./dist/js/unrar.js',
+    `-o ./${esm ? 'esm' : 'dist'}/js/unrar.js`,
     unrarFiles.map((file) => `./src/cpp/unrar/${file}.cpp`).join(' '),
     extraFiles.map((file) => `${file}.cpp`).join(' '),
   ].join(' '),
