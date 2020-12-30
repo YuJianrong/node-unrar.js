@@ -21,8 +21,6 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
-      - uses: satackey/action-docker-layer-caching@v0.0.11
-        continue-on-error: true
       - run: npm ci
       - run: npm run build:release
       - run: npm test
@@ -42,8 +40,6 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
-      - uses: satackey/action-docker-layer-caching@v0.0.11
-        continue-on-error: true
       - run: npm ci
       - run: npm run build:release
       - run: npm run clean:test

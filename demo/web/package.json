@@ -4,7 +4,6 @@
   "description": "My webpack project",
   "private": true,
   "scripts": {
-    "preinstall": "(cd ../.. && npm run build:release && npm pack)",
     "build": "webpack",
     "clean": "rm -rf ./dist",
     "start": "webpack serve --open"
@@ -26,6 +25,6 @@
     "webpack-dev-server": "^3.11.1"
   },
   "dependencies": {
-    "node-unrar-js": "file:../../node-unrar-js-1.0.0.tgz"
+    "node-unrar-js": "^1.0.0"
   }
 }
