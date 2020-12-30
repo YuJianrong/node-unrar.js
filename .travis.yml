@@ -1,21 +1,24 @@
 sudo: required
 language: node_js
 node_js:
-- '6'
+  - "14"
 services:
-- docker
+  - docker
 before_install:
-- docker pull apiaryio/emcc:1.37
-- npm run prepare
+  - docker pull emscripten/emsdk:2.0.11
+  - npm run prepare
 before_script:
-- npm run clean
+  - npm run clean
 script:
-- npm run buildRelease
-- npm run test
-before_deply: npm run clean-test
+  - npm run build:release
+  - npm run test
+before_deply: npm run clean:test
 deploy:
   provider: npm
-  skip_cleanup: true
   email: yujianrong@gmail.com
   api_key:
-    secure: aVIHmqus+DwsoaK0/EAYqWWy/IzbvlHoefCnrs3hLv5u1AdT1NrgwC5D14cproCSNB6UT+pPbQZpYonks/mgvGUTMV9nZFD7y385kXppe0/cglVYrWmsj5PlTW8L1AfznSpyogVKXXFzr5ogN6/xmHZKTwdq3EmhfU1y86e70lRzg/lZYNrAMEV7cnCZ15kmBSA/Io4a1DZuGTBSxKExWwWq4i+h/rq9hcUYThmnP8rIlVA6z1FLFdY2e8wLbLtMwgRPY5wqER4oFR/p5xRChTad9YsJyAuBw8J84CTdXbDjXzmZJ1gmxRszP4KCeOx40sxBJbQDgnc9TAA6T1mAVvcR+9mUCaSzFaMomf+uq7+3yupB0e9GuyftzgUZMX/lcI2iY4IVnGqxnbRG34DxQN/YXrgHSvmtQQdS7+E7+s5e+YXYlfKVDTyGU5NysircLutbzrqx03BD6ntM/vXA01gCDsqMqdXgBMYXmPKsoQtMGpBT0p6lHCxK/EHE78f+fqPl3nSjJ91pI4eLfErhJ6xwfa7ocAie74hL7pOx9FI9zfWJERzMf9i1p6DAD67R97uay8clk5QK/gD4MJrisYyAfGqxuhtlvG1aaJU6O6DJ8SxQxU/t7cJW0WvujcaisKTGn2qH9J8Lvr9WPjiZ1fvukMqqZkoxym9zpgunt30=
+    secure: oMY0IWBN49x7myS9TXYLZOmz/Xw9KbsRRSRe1O73DWAMrFbQic5y0JOMrWRY5FEGBYz2B12N+5E2t9xB511ldgY12Ru5wKXTWX7e38ENs8dub46rNdUe8es2NOtDleQMM2VFX94SvJrkzSKY5cvmTjtovn6XzBqwqpEMVIykuVa2F42L3tf9jQTPGYnXbkbFMipKSQwd2UfVGr4+U2LgcO8VsJ0c5+lgUVP8GqT5cp31FZ1t6QAdgXbGrhFDjBWSYH8b4ltQVYL2UGozSSMgcTd2FjML/GllDHRYeXGRrrTCkx6oaSyuG7fT0h5NJ/6Yt5vx0JQgL9pEd2iJTSXZicsiAlz9KWpD4ugAllzIvPILSAsuvrDxVfKvwi1aEid9qvvq/lO3p5peHna3tyeH2W91yR0PpcwJF55FvWPjFepRYg3epD0HQ8EPnT2iU0N2xu+UvZBS+QQB3QLOXDkYk/RDF41uoIABuId8EJy5DZxcqfNDOcgCbga6FFBeRW5W3UPoEb8eWZUg3X+G4u8gAUeBfeQ+VLf8BYj1rCn9yJiFcZTZsr9CwP/nEukbNV/2XhBHAc0R4f3W4lSvc0HMzHrDJkZcEkT7s7wEeWGk3yEzzS2V8tDLXJW8nlib6lLwAhi/u2mjVJ5vRX/ejSaXc7DHdqLWs359f9rTsrK/5kw=
+  on:
+    tags: true
+    repo: YuJianrong/node-unrar.js
+  skip_cleanup: "true"

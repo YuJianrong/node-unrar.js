@@ -184,5 +184,6 @@ describe('File Test', () => {
         return true;
       },
     );
+    shjs.rm('-rf', './tmp');
   });
 });
