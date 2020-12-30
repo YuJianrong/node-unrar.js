@@ -27,7 +27,7 @@ export class DataFile {
   }
   public readAll(): Uint8Array {
     this.flatten();
-    return this.buffers[0];
+    return this.buffers[0] || new Uint8Array();
   }
   public write(data: Uint8Array): boolean {
     this.buffers.push(data);
