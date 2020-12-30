@@ -1,6 +1,6 @@
 # node-unrar-js
 
-![Build Status](https://github.com/YuJianrong/node-unrar.js/workflows/Build/badge.svg)
+[![Build Status](https://github.com/YuJianrong/node-unrar.js/workflows/Build/badge.svg)](https://github.com/YuJianrong/node-unrar.js/actions?query=workflow%3ABuild)
 [![npm version](https://badge.fury.io/js/node-unrar-js.svg)](https://badge.fury.io/js/node-unrar-js)
 [![MIT License](https://badges.frapsoft.com/os/mit/mit.svg?v=103)](https://opensource.org/licenses/mit-license.php)
 [![TypeScript](https://badges.frapsoft.com/typescript/code/typescript.svg?v=101)](https://www.typescriptlang.org/)

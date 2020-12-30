@@ -21,7 +21,14 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-          registry-url: "https://registry.npmjs.org"
+      - uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+      - uses: satackey/action-docker-layer-caching@v0.0.11
+        continue-on-error: true
       - run: npm ci
       - run: npm run build:release
       - run: npm test
