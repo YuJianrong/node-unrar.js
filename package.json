@@ -8,9 +8,9 @@
   },
   "repository": "YuJianrong/node-unrar.js",
   "main": "./dist/index.js",
-  "module": "./esm/index.js",
+  "module": "./esm/index.esm.js",
   "scripts": {
-    "prepare": "wget http://www.rarlab.com/rar/unrarsrc-6.0.2.tar.gz && tar -xf unrarsrc-6.0.2.tar.gz -C src/cpp && rm unrarsrc-6.0.2.tar.gz",
+    "prepare": "wget http://www.rarlab.com/rar/unrarsrc-6.0.2.tar.gz && tar -xf unrarsrc-6.0.2.tar.gz -C src/cpp && rm -rf unrarsrc-6.0.2.tar.gz",
     "clean": "rm -rf dist coverage dist_map esm",
     "clean:test": "rm -rf dist/test dist/build esm/test esm/build",
     "lint": "eslint './src/**/*.ts' --max-warnings 0",

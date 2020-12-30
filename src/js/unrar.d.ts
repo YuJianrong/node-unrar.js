@@ -4,4 +4,4 @@ interface module {
   extractor?: any;
 }
 
-export default function unrar(): Promise<module>;
+export default function unrar(options?: { wasmBinary?: ArrayBuffer }): Promise<module>;

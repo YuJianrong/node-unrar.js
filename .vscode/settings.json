@@ -16,7 +16,7 @@
   "typescript.implementationsCodeLens.enabled": true,
   "debug.javascript.usePreview": true,
   "eslint.format.enable": true,
-  "cSpell.words": ["HEAPU", "unrar"],
+  "cSpell.words": ["HEAPU", "unrar", "wasm"],
   "files.associations": {
     "string": "cpp"
   }

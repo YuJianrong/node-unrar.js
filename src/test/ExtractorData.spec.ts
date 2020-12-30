@@ -29,6 +29,7 @@ describe('Data Test', () => {
       [...fileHeaders],
       [
         {
+          comment: '',
           crc: 0,
           flags: {
             directory: false,
@@ -43,6 +44,7 @@ describe('Data Test', () => {
           unpVer: '2.9',
         },
         {
+          comment: '',
           crc: 0,
           flags: {
             directory: false,
@@ -90,6 +92,7 @@ describe('Data Test', () => {
       [...fileHeaders],
       [
         {
+          comment: '',
           crc: 1468669977,
           flags: {
             directory: false,
@@ -112,6 +115,7 @@ describe('Data Test', () => {
           },
           packSize: 32,
           unpSize: 15,
+          comment: '',
           crc: 2631402331,
           time: '2017-04-03T20:09:18.000',
           unpVer: '2.9',
@@ -126,6 +130,7 @@ describe('Data Test', () => {
           },
           packSize: 16,
           unpSize: 5,
+          comment: '',
           crc: 762090570,
           time: '2017-04-03T19:58:42.000',
           unpVer: '2.9',
@@ -153,6 +158,7 @@ describe('Data Test', () => {
       [...fileHeaders],
       [
         {
+          comment: '',
           crc: 2631402331,
           flags: {
             directory: false,
@@ -167,6 +173,7 @@ describe('Data Test', () => {
           unpVer: '2.9',
         },
         {
+          comment: '',
           crc: 1468669977,
           flags: {
             directory: false,
@@ -211,6 +218,7 @@ describe('Data Test', () => {
           },
           packSize: 32,
           unpSize: 15,
+          comment: '',
           crc: 2631402331,
           time: '2017-04-03T20:09:18.000',
           unpVer: '2.9',
@@ -225,6 +233,7 @@ describe('Data Test', () => {
           },
           packSize: 32,
           unpSize: 5,
+          comment: '',
           crc: 1468669977,
           time: '2017-04-03T20:08:44.000',
           unpVer: '2.9',
@@ -247,6 +256,7 @@ describe('Data Test', () => {
       {
         extraction: Uint8Array.from('1File'.split('').map((c) => c.charCodeAt(0))),
         fileHeader: {
+          comment: '',
           crc: 1468669977,
           flags: {
             directory: false,

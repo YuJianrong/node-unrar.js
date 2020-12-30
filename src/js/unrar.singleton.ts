@@ -3,9 +3,9 @@ import unrarFactory from './unrar';
 
 let unrar: any;
 
-export async function getUnrar(): Promise<any> {
+export async function getUnrar(options?: { wasmBinary?: ArrayBuffer }): Promise<any> {
   if (!unrar) {
-    unrar = await unrarFactory();
+    unrar = await unrarFactory(options);
   }
   return unrar;
 }

@@ -7,6 +7,8 @@ src
 coverage
 dist/test
 dist/build
+esm/test
+esm/build
 dist_map
 testFiles
 UnRarDLL_Doc
@@ -15,3 +17,5 @@ UnRarDLL_Doc
 .npmrc
 .vscode
 umd
+*.tgz
+demo

@@ -27,6 +27,7 @@ describe('File Test', () => {
       [...fileHeaders],
       [
         {
+          comment: '',
           crc: 0,
           flags: {
             directory: false,
@@ -41,6 +42,7 @@ describe('File Test', () => {
           unpVer: '2.9',
         },
         {
+          comment: '',
           crc: 0,
           flags: {
             directory: false,
@@ -79,6 +81,7 @@ describe('File Test', () => {
       [...fileHeaders],
       [
         {
+          comment: '',
           crc: 2631402331,
           flags: {
             directory: false,
@@ -93,6 +96,7 @@ describe('File Test', () => {
           unpVer: '2.9',
         },
         {
+          comment: '',
           crc: 1468669977,
           flags: {
             directory: false,
@@ -147,12 +151,14 @@ describe('File Test', () => {
   it('Extract File encrypted with different passwords (no password)', async () => {
     const extractor = await unrar.createExtractorFromFile({
       filepath: './testFiles/FileEncByName.rar',
+      targetPath: './tmp/',
     });
     const { files } = extractor.extract();
 
     const { value: file0 } = files.next() as IteratorResult<ArcFile<never>, never>;
 
     assert.deepStrictEqual(file0.fileHeader, {
+      comment: '',
       crc: 1468669977,
       flags: {
         directory: false,

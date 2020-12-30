@@ -71,6 +71,7 @@ export interface FileHeader {
   time: string;
   unpVer: string;
   method: CompressMethod;
+  comment: string;
   // fileAttr: number;
 }
 
@@ -260,6 +261,7 @@ export abstract class Extractor<withContent = never> {
       time: getDateString(arcFileHeader.time),
       unpVer: `${Math.floor(arcFileHeader.unpVer / 10)}.${arcFileHeader.unpVer % 10}`,
       method: getMethod(arcFileHeader.method),
+      comment: arcFileHeader.comment,
       // // fileAttr: arcFileHeader.fileAttr,
     };
 

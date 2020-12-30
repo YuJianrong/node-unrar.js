@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title><%= htmlWebpackPlugin.options.title %></title>
+  </head>
+  <body>
+    <div id="file-picker">
+      Pick a rar file: <input id="file" type="file" accept=".rar" />
+    </div>
+    <div id="archive">
+      <div class="box"></div>
+    </div>
+    <div class="section" id="template-arc-header">
+      <div>Archive comment: <span class="archiveComment"></span></div>
+    </div>
+    <div class="section" id="template-file-header">
+      <div>File Name: <span class="fileName"></span></div>
+      <div>Comment: <span class="fileComment"></span></div>
+      <div>Unpacked Size: <span class="unpSize"></span></div>
+      <div>Encrypted: <span class="encrypted"></span></div>
+    </div>
+    <div class="section" id="template-content">
+      <div>File Name: <span class="fileName"></span></div>
+      <div>Content: <span class="content"></span></div>
+    </div>
+  </body>
+</html>

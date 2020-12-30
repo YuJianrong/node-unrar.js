@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "keyofStringsOnly": true,
+    "strict": true,
+    "module": "ES2015",
+    "moduleResolution": "node",
+    "target": "es2018"
+  },
+  "files": ["src/index.ts"]
+}

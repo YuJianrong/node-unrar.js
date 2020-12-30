@@ -1,0 +1,20 @@
+#file-picker {
+  padding: 64px;
+}
+
+#archive {
+  padding: 0 64px;
+}
+
+.box {
+  width: 480px;
+  text-align: left;
+}
+
+.section {
+  margin: 16px 0;
+}
+
+[id^="template-"] {
+  display: none;
+}

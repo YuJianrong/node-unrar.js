@@ -38,6 +38,7 @@ struct ArcFileHeader
 {
   State state;
   wstring name;
+  wstring comment;
   unsigned int flags;
   double packSize;
   double unpSize;
@@ -48,6 +49,9 @@ struct ArcFileHeader
   unsigned int method;
   unsigned int fileAttr;
 };
+
+wchar_t WCmtBuf[16384];
+char CmtBuf[16384];
 
 class RarArchive
 {
@@ -67,12 +71,11 @@ public:
 
   ArcHeader open(const wstring &filepath, const wstring &password, bool forList)
   {
-    wchar_t CmtBuf[16384];
     struct RAROpenArchiveDataEx OpenArchiveData;
     memset(&OpenArchiveData, 0, sizeof(OpenArchiveData));
     OpenArchiveData.ArcNameW = (wchar_t *)filepath.c_str();
-    OpenArchiveData.CmtBufW = CmtBuf;
-    OpenArchiveData.CmtBufSize = sizeof(CmtBuf) / sizeof(CmtBuf[0]);
+    OpenArchiveData.CmtBufW = WCmtBuf;
+    OpenArchiveData.CmtBufSize = sizeof(WCmtBuf) / sizeof(WCmtBuf[0]);
     OpenArchiveData.OpenMode = forList ? RAR_OM_LIST : RAR_OM_EXTRACT;
     OpenArchiveData.Callback = listCallback;
     // OpenArchiveData.UserData = (LPARAM)password.c_str();
@@ -97,7 +100,7 @@ public:
     header.flags = OpenArchiveData.Flags;
     if (OpenArchiveData.CmtState == 1)
     {
-      header.comment = CmtBuf;
+      header.comment = WCmtBuf;
     }
     return header;
   }
@@ -106,6 +109,9 @@ public:
   {
     struct RARHeaderDataEx HeaderData;
     memset(&HeaderData, 0, sizeof(HeaderData));
+    HeaderData.CmtBuf = CmtBuf;
+    HeaderData.CmtBufSize = sizeof(CmtBuf) / sizeof(CmtBuf[0]);
+
     int RHCode = RARReadHeaderEx(hArcData, &HeaderData);
 
     ArcFileHeader header;
@@ -117,14 +123,19 @@ public:
     {
       header.name = HeaderData.FileNameW;
       header.flags = HeaderData.Flags;
-      header.packSize = (double)HeaderData.PackSize + (double)HeaderData.PackSizeHigh * 4294967296.0;
-      header.unpSize = (double)HeaderData.UnpSize + (double)HeaderData.UnpSizeHigh * 4294967296.0;
+      header.packSize = (double)HeaderData.PackSize + (double)HeaderData.PackSizeHigh * 0x100000000;
+      header.unpSize = (double)HeaderData.UnpSize + (double)HeaderData.UnpSizeHigh * 0x100000000;
       header.hostOS = HeaderData.HostOS;
       header.crc = HeaderData.FileCRC;
       header.time = HeaderData.FileTime;
       header.unpVer = HeaderData.UnpVer;
       header.method = HeaderData.Method;
       header.fileAttr = HeaderData.FileAttr;
+      if (HeaderData.CmtState == 1)
+      {
+        UtfToWide(CmtBuf, WCmtBuf, sizeof(WCmtBuf) / sizeof(WCmtBuf[0]));
+        header.comment = WCmtBuf;
+      }
     }
     return header;
   }
@@ -161,6 +172,7 @@ EMSCRIPTEN_BINDINGS(stl_wrappers)
   value_object<ArcFileHeader>("ArcFileHeader")
       .field("state", &ArcFileHeader::state)
       .field("name", &ArcFileHeader::name)
+      .field("comment", &ArcFileHeader::comment)
       .field("flags", &ArcFileHeader::flags)
       .field("packSize", &ArcFileHeader::packSize)
       .field("unpSize", &ArcFileHeader::unpSize)
