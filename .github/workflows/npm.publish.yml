@@ -16,7 +16,7 @@ jobs:
         with:
           node-version: 12
       - run: npm ci
-      - run: npm build:release
+      - run: npm run build:release
       - run: npm test
 
   publish-npm:
@@ -32,4 +32,3 @@ jobs:
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
-
