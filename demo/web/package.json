@@ -4,7 +4,7 @@
   "description": "My webpack project",
   "private": true,
   "scripts": {
-    "build": "webpack",
+    "build": "webpack --mode=production",
     "clean": "rm -rf ./dist",
     "start": "webpack serve --open"
   },
