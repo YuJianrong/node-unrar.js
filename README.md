@@ -44,6 +44,7 @@ npm install node-unrar-js
   - `filepath: string` : File path of the RAR archive file
   - `targetPath?: string` : _Optional_ target folder
   - `password?: string` : _Optional_ password
+  - `filenameTransform?: (filename: string) => string`: _Optional_ transform the file name before it's created on file system
 
   _Node_: This function is not available in EM2015 Module since the EM2015 Module is used for webpack in Browser.
 
@@ -210,6 +211,10 @@ If you want to compile the module by yourself, please follow the steps below:
 This module is licensed under MIT.
 
 ### Changelog
+
+#### 1.0.1 (2021-02-18)
+
+- Add new option `filenameTransform` for `ExtractorFromFileOptions`.
 
 #### 1.0.0 (2020-12-29)
 

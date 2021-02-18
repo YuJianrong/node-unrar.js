@@ -14,8 +14,14 @@ export class ExtractorFile extends Extractor {
     };
   };
 
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types,@typescript-eslint/no-explicit-any
-  constructor(unrar: any, filepath: string, targetPath: string, password: string) {
+  constructor(
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types,@typescript-eslint/no-explicit-any
+    unrar: any,
+    filepath: string,
+    targetPath: string,
+    password: string,
+    private filenameTransform: (filename: string) => string,
+  ) {
     super(unrar, password);
     this._filePath = filepath;
     this.fileMap = {};
@@ -33,7 +39,7 @@ export class ExtractorFile extends Extractor {
   }
 
   protected create(filename: string): number {
-    const fullpath = path.join(this._target, filename);
+    const fullpath = path.join(this._target, this.filenameTransform(filename));
     const dir = path.parse(fullpath).dir;
     dir.split('/').reduce((path, folder) => {
       path += folder + '/';

@@ -7,15 +7,17 @@ export interface ExtractorFromFileOptions {
   filepath: string;
   targetPath?: string;
   password?: string;
+  filenameTransform?: (filename: string) => string;
 }
 
 export async function createExtractorFromFile({
   filepath,
   targetPath = '',
   password = '',
+  filenameTransform = (filename: string) => filename,
 }: ExtractorFromFileOptions): Promise<Extractor> {
   const unrar = await getUnrar();
-  const extractor = new ExtractorFile(unrar, filepath, targetPath, password);
+  const extractor = new ExtractorFile(unrar, filepath, targetPath, password, filenameTransform);
   unrar.extractor = extractor;
   return extractor;
 }
