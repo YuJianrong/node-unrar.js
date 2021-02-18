@@ -148,6 +148,29 @@ describe('File Test', () => {
     shjs.rm('-rf', './tmp');
   });
 
+  it('Extract File with name transformed', async () => {
+    const extractor = await unrar.createExtractorFromFile({
+      filepath: './testFiles/FolderTest.rar',
+      targetPath: './tmp/',
+      password: '1234',
+      filenameTransform: (name) => `${name}.tmp`,
+    });
+    const { files } = extractor.extract();
+    const list = [...files];
+
+    assert.deepStrictEqual(list[0].fileHeader.name, 'Folder1/Folder Space/long.txt');
+    assert.deepStrictEqual(list[1].fileHeader.name, 'Folder1/Folder 中文/2中文.txt');
+
+    let long = '',
+      i = 0;
+    while (long.length < 1024 * 1024) {
+      long += '1' + '0'.repeat(i++);
+    }
+    assert.strictEqual(fs.readFileSync('./tmp/Folder1/Folder Space/long.txt.tmp', 'utf-8'), long);
+
+    shjs.rm('-rf', './tmp');
+  });
+
   it('Extract File encrypted with different passwords (no password)', async () => {
     const extractor = await unrar.createExtractorFromFile({
       filepath: './testFiles/FileEncByName.rar',
