@@ -212,6 +212,10 @@ This module is licensed under MIT.
 
 ### Changelog
 
+#### 1.0.2 (2021-04-01)
+
+- Fix for Security Vulnerability on dependencies
+
 #### 1.0.1 (2021-02-18)
 
 - Add new option `filenameTransform` for `ExtractorFromFileOptions`.
