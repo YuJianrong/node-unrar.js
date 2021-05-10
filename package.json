@@ -1,6 +1,6 @@
 {
   "name": "node-unrar-js",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Pure JavaScript RAR archive extractor by compile the official unrar lib by Emscripten.",
   "homepage": "https://github.com/YuJianrong/node-unrar.js",
   "bugs": {
@@ -21,9 +21,7 @@
     "test": "mocha dist/test/*.spec.js",
     "test:debug": "npm run test -- --inspect-brk"
   },
-  "keywords": [
-    "unrar"
-  ],
+  "keywords": ["unrar"],
   "author": "Jianrong Yu <yujianrong@gmail.com>",
   "license": "MIT",
   "devDependencies": {
@@ -48,11 +46,7 @@
     }
   },
   "lint-staged": {
-    "*.{json,md,less,yaml,yml}": [
-      "prettier --write"
-    ],
-    "*.{ts,tsx}": [
-      "eslint --fix --max-warnings 0"
-    ]
+    "*.{json,md,less,yaml,yml}": ["prettier --write"],
+    "*.{ts,tsx}": ["eslint --fix --max-warnings 0"]
   }
 }
