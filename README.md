@@ -155,19 +155,19 @@ Note: although the return value `fileHeaders` and `files` are iterators, they mu
 ## Example
 
 ```js
-const fs = require("fs");
-const unrar = require("node-unrar-js");
+const fs = require('fs');
+const unrar = require('node-unrar-js');
 
 async function main() {
   // Read the archive file into a typedArray
-  const buf = Uint8Array.from(fs.readFileSync("a.rar")).buffer;
+  const buf = Uint8Array.from(fs.readFileSync('a.rar')).buffer;
   const extractor = await unrar.createExtractorFromData({ data: buf });
 
   const list = extractor.getFileList();
   const listArcHeader = list.arcHeader; // archive header
   const fileHeaders = [...list.fileHeaders]; // load the file headers
 
-  const extracted = extractor.extract({ files: ["1.txt"] });
+  const extracted = extractor.extract({ files: ['1.txt'] });
   // extracted.arcHeader  : archive header
   const files = [...extracted.files]; //load the files
   files[0].fileHeader; // file header
@@ -211,6 +211,10 @@ If you want to compile the module by yourself, please follow the steps below:
 This module is licensed under MIT.
 
 ### Changelog
+
+#### 1.0.3 (2021-05-10)
+
+- Fix for Security Vulnerability on dependencies
 
 #### 1.0.2 (2021-04-01)
 
