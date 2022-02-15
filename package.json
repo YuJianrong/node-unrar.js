@@ -27,6 +27,7 @@
   "author": "Jianrong Yu <yujianrong@gmail.com>",
   "license": "MIT",
   "devDependencies": {
+    "@types/eslint": "^8.4.1",
     "@types/mocha": "^9.1.0",
     "@types/shelljs": "^0.8.11",
     "@typescript-eslint/eslint-plugin": "^5.12.0",

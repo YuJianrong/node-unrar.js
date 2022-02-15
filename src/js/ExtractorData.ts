@@ -37,9 +37,8 @@ export class ExtractorData extends Extractor<Uint8Array> {
 
     function* getFiles(this: ExtractorData): Generator<ArcFile<Uint8Array>> {
       for (const file of files) {
-        file.extraction = this.dataFiles[
-          this.getExtractedFileName(file.fileHeader.name)
-        ].file.readAll();
+        file.extraction =
+          this.dataFiles[this.getExtractedFileName(file.fileHeader.name)].file.readAll();
         yield file;
       }
     }
