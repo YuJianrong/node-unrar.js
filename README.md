@@ -212,6 +212,10 @@ This module is licensed under MIT.
 
 ### Changelog
 
+#### 1.0.4 (2022-02-15)
+
+- Fix folder creation issue on Windows.
+
 #### 1.0.3 (2021-05-10)
 
 - Fix for Security Vulnerability on dependencies

@@ -1,6 +1,6 @@
 {
   "name": "node-unrar-js",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Pure JavaScript RAR archive extractor by compile the official unrar lib by Emscripten.",
   "homepage": "https://github.com/YuJianrong/node-unrar.js",
   "bugs": {
@@ -21,23 +21,25 @@
     "test": "mocha dist/test/*.spec.js",
     "test:debug": "npm run test -- --inspect-brk"
   },
-  "keywords": ["unrar"],
+  "keywords": [
+    "unrar"
+  ],
   "author": "Jianrong Yu <yujianrong@gmail.com>",
   "license": "MIT",
   "devDependencies": {
-    "@types/mocha": "^8.2.0",
-    "@types/shelljs": "^0.8.8",
-    "@typescript-eslint/eslint-plugin": "^4.11.1",
-    "@typescript-eslint/parser": "^4.11.1",
-    "eslint": "^7.16.0",
-    "eslint-config-prettier": "^7.1.0",
-    "eslint-plugin-prettier": "^3.3.0",
-    "husky": "^4.3.6",
-    "lint-staged": "^10.5.3",
-    "mocha": "^8.2.1",
-    "prettier": "^2.2.1",
-    "shelljs": "^0.8.4",
-    "typescript": "^4.1.3"
+    "@types/mocha": "^9.1.0",
+    "@types/shelljs": "^0.8.11",
+    "@typescript-eslint/eslint-plugin": "^5.12.0",
+    "@typescript-eslint/parser": "^5.12.0",
+    "eslint": "^8.9.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "husky": "^7.0.4",
+    "lint-staged": "^12.3.4",
+    "mocha": "^9.2.0",
+    "prettier": "^2.5.1",
+    "shelljs": "^0.8.5",
+    "typescript": "^4.5.5"
   },
   "husky": {
     "hooks": {
@@ -45,8 +47,15 @@
       "pre-push": "npm run lint"
     }
   },
+  "engines": {
+    "node": ">=10.0.0"
+  },
   "lint-staged": {
-    "*.{json,md,less,yaml,yml}": ["prettier --write"],
-    "*.{ts,tsx}": ["eslint --fix --max-warnings 0"]
+    "*.{json,md,less,yaml,yml}": [
+      "prettier --write"
+    ],
+    "*.{ts,tsx}": [
+      "eslint --fix --max-warnings 0"
+    ]
   }
 }
