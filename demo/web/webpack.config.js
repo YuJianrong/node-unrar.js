@@ -35,12 +35,12 @@ module.exports = {
     path: path.resolve(__dirname, 'dist'),
   },
   devServer: {
-    contentBase: './dist',
+    static: './dist',
   },
 
   plugins: [
     new CopyPlugin({
-      patterns: [{ from: 'node_modules/node-unrar-js/esm/js/*.wasm', to: 'assets/[name].[ext]' }],
+      patterns: [{ from: 'node_modules/node-unrar-js/esm/js/*.wasm', to: 'assets/[name][ext]' }],
     }),
     new CleanWebpackPlugin(),
     new webpack.ProgressPlugin(),
