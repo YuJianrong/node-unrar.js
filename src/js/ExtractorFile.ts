@@ -41,7 +41,11 @@ export class ExtractorFile extends Extractor {
   protected create(filename: string): number {
     const fullpath = path.join(this._target, this.filenameTransform(filename));
     const dir = path.parse(fullpath).dir;
-    fs.mkdirSync(dir, { recursive: true });
+
+    // Skip if directory is the current directory
+    if (dir !== '') {
+      fs.mkdirSync(dir, { recursive: true });
+    }
 
     const fd = fs.openSync(fullpath, 'w');
     this.fileMap[fd] = {
