@@ -35,7 +35,7 @@ npm install node-unrar-js
 
   - `data: ArrayBuffer` : ArrayBuffer object of the RAR archive file
   - `password?: string` : _Optional_ password
-  - `wasmBinary? ArrayBuffer;` : _Optional_ Use in browser, the wasm binary must be loaded in the code and send to this function to load the wasm code
+  - `wasmBinary? ArrayBuffer;` : _Optional_ Use in browser/webpack, the wasm binary must be loaded in the code and send to this function to load the wasm code
 
 - `async function createExtractorFromFile(options: ExtractorFromFileOptions): Promise<Extractor>` - Get the File Extractor
 
@@ -45,6 +45,7 @@ npm install node-unrar-js
   - `targetPath?: string` : _Optional_ target folder
   - `password?: string` : _Optional_ password
   - `filenameTransform?: (filename: string) => string`: _Optional_ transform the file name before it's created on file system
+  - `wasmBinary? ArrayBuffer;` : _Optional_ Use in nodejs/webpack, the wasm binary must be loaded in the code and send to this function to load the wasm code in webpack based nodejs project (please read [Used in Webpack-bundled NodeJS Project](#use-in-webpack-bundled-nodejs-project) for more details).
 
   _Node_: This function is not available in EM2015 Module since the EM2015 Module is used for webpack in Browser.
 
@@ -176,9 +177,26 @@ async function main() {
 main();
 ```
 
-## Demo in webpack
+## Demo in Webpack
 
 This package can also be used in browser by Webpack, please visit the [demo project](https://github.com/YuJianrong/node-unrar.js/tree/master/demo/web) to see how to use it in webpack.
+
+## Use in Webpack-bundled NodeJS Project
+
+In most cases the exported ESModule is used in browser by Webpack, but in case if the NodeJs project (or an Electron project) is bundled by Webpack, the `wasmBinary` data must be loaded manually just like the browser by Webpack, it can be loaded like this:
+
+```Typescript
+import fs from 'fs';
+import { createExtractorFromFile } from 'node-unrar-js/esm';
+
+const wasmBinary = fs.readFileSync(require.resolve('node-unrar-js/esm/js/unrar.wasm'));
+
+const extractor = await createExtractorFromFile({ wasmBinary, filepath: './WithComment.rar' });
+
+// const list = extractor.getFileList();
+```
+
+Note: the package must be loaded from `'node-unrar-js/esm'` instead of `'node-unrar-js'` to enable the function `createExtractorFromFile` in ES Module.
 
 ## TypeScript
 
@@ -211,6 +229,10 @@ If you want to compile the module by yourself, please follow the steps below:
 This module is licensed under MIT.
 
 ### Changelog
+
+#### 1.0.6 (2022-03-16)
+
+- Add `createExtractorFromFile` support in Webpack
 
 #### 1.0.5 (2022-02-28)
 
