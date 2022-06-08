@@ -22,7 +22,7 @@ const unrarFiles: string[] = [
   'arcread',
   'unicode',
   'system',
-  'isnt',
+  // 'isnt',
   'crypt',
   'crc',
   'rawread',
@@ -65,7 +65,7 @@ const extraFiles: string[] = [
 console.log(`Compile unrar`);
 shjs.exec(
   [
-    'docker run --rm -v $(pwd):/src -t -u $(id -u):$(id -g) emscripten/emsdk:2.0.11 emcc',
+    'docker run --rm -v $(pwd):/src -t -u $(id -u):$(id -g) emscripten/emsdk:3.1.13 emcc',
     '--bind',
     '-Wno-switch -Wno-dangling-else -Wno-logical-op-parentheses',
     '-DRARDLL',
@@ -79,7 +79,7 @@ shjs.exec(
     '-s DISABLE_EXCEPTION_CATCHING=0',
     '-s FETCH_SUPPORT_INDEXEDDB=0',
     // '-s WASM=0',
-    `-s EXTRA_EXPORTED_RUNTIME_METHODS='["setTempRet0"]'`,
+    `-s EXPORTED_RUNTIME_METHODS='["setTempRet0"]'`,
     '--memory-init-file 0',
     release ? '-O3' : '-g3',
     // release ? '' : '--source-map-base ./dist/js/',
