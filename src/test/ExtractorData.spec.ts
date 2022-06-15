@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import * as assert from 'assert';
 import * as fs from 'fs';
 import * as unrar from '../index';
@@ -242,9 +243,9 @@ describe('Data Test', () => {
       ],
     );
 
-    assert.strictEqual(Buffer.from(list[0].extraction.subarray(0, 3)).toString('hex'), 'efbbbf');
-    assert.strictEqual(Buffer.from(list[0].extraction.subarray(3)).toString('utf-8'), '中文中文');
-    assert.strictEqual(Buffer.from(list[1].extraction).toString('utf-8'), '1File');
+    assert.strictEqual(Buffer.from(list[0].extraction!.subarray(0, 3)).toString('hex'), 'efbbbf');
+    assert.strictEqual(Buffer.from(list[0].extraction!.subarray(3)).toString('utf-8'), '中文中文');
+    assert.strictEqual(Buffer.from(list[1].extraction!).toString('utf-8'), '1File');
   });
 
   it('Extract Files by callback', async () => {
@@ -280,7 +281,7 @@ describe('Data Test', () => {
 
     const { value: file0 } = files.next() as IteratorResult<ArcFile<Uint8Array>, never>;
 
-    assert.deepStrictEqual(Buffer.from(file0.extraction).toString('utf8'), '1File');
+    assert.deepStrictEqual(Buffer.from(file0.extraction!).toString('utf8'), '1File');
 
     assert.throws(
       () => files.next(),
@@ -302,13 +303,13 @@ describe('Data Test', () => {
     let list = [...files];
     assert.deepStrictEqual(list.length, 2);
 
-    assert.strictEqual(Buffer.from(list[0].extraction).toString('utf-8'), '1File');
-    assert.strictEqual(Buffer.from(list[1].extraction.subarray(0, 3)).toString('hex'), 'efbbbf');
-    assert.strictEqual(Buffer.from(list[1].extraction.subarray(3)).toString('utf-8'), '中文中文');
+    assert.strictEqual(Buffer.from(list[0].extraction!).toString('utf-8'), '1File');
+    assert.strictEqual(Buffer.from(list[1].extraction!.subarray(0, 3)).toString('hex'), 'efbbbf');
+    assert.strictEqual(Buffer.from(list[1].extraction!.subarray(3)).toString('utf-8'), '中文中文');
 
     files = extractor.extract({ files: ['3Sec.txt'], password: '3Sec' }).files;
     list = [...files];
-    assert.strictEqual(Buffer.from(list[0].extraction).toString('utf-8'), '3Secc');
+    assert.strictEqual(Buffer.from(list[0].extraction!).toString('utf-8'), '3Secc');
   });
 
   it('Extract File with folders', async () => {
@@ -317,16 +318,74 @@ describe('Data Test', () => {
 
     const list = [...files];
 
-    assert.deepStrictEqual(list[0].fileHeader.name, 'Folder1/Folder Space/long.txt');
-    assert.deepStrictEqual(list[1].fileHeader.name, 'Folder1/Folder 中文/2中文.txt');
+    assert.deepStrictEqual(
+      list.map(({ fileHeader }) => fileHeader),
+      [
+        {
+          name: 'Folder1/Folder Space/long.txt',
+          flags: { encrypted: false, solid: false, directory: false },
+          packSize: 5278,
+          unpSize: 1049076,
+          crc: 4138211950,
+          time: '2017-04-06T12:31:36.000',
+          unpVer: '2.9',
+          method: 'Normal',
+          comment: '',
+        },
+        {
+          name: 'Folder1/Folder 中文/2中文.txt',
+          flags: { encrypted: false, solid: false, directory: false },
+          packSize: 15,
+          unpSize: 15,
+          crc: 2631402331,
+          time: '2017-04-03T20:09:18.000',
+          unpVer: '2.9',
+          method: 'Storing',
+          comment: '',
+        },
+        {
+          name: 'Folder1/Folder Space',
+          flags: { encrypted: false, solid: false, directory: true },
+          packSize: 0,
+          unpSize: 0,
+          crc: 0,
+          time: '2017-04-06T12:34:10.000',
+          unpVer: '2.0',
+          method: 'Storing',
+          comment: '',
+        },
+        {
+          name: 'Folder1/Folder 中文',
+          flags: { encrypted: false, solid: false, directory: true },
+          packSize: 0,
+          unpSize: 0,
+          crc: 0,
+          time: '2017-04-06T12:34:14.000',
+          unpVer: '2.0',
+          method: 'Storing',
+          comment: '',
+        },
+        {
+          name: 'Folder1',
+          flags: { encrypted: false, solid: false, directory: true },
+          packSize: 0,
+          unpSize: 0,
+          crc: 0,
+          time: '2017-04-06T12:33:32.000',
+          unpVer: '2.0',
+          method: 'Storing',
+          comment: '',
+        },
+      ],
+    );
 
     let long = '',
       i = 0;
     while (long.length < 1024 * 1024) {
       long += '1' + '0'.repeat(i++);
     }
-    assert.strictEqual(Buffer.from(list[0].extraction).toString('utf-8'), long);
+    assert.strictEqual(Buffer.from(list[0].extraction!).toString('utf-8'), long);
 
-    assert.strictEqual(Buffer.from(list[1].extraction.subarray(3)).toString('utf-8'), '中文中文');
+    assert.strictEqual(Buffer.from(list[1].extraction!.subarray(3)).toString('utf-8'), '中文中文');
   });
 });

@@ -20,3 +20,5 @@ umd
 *.tgz
 demo
 github
+.github
+.husky

@@ -95,7 +95,7 @@ export interface ArcList {
 
 export type ArcFile<withContent = never> = {
   fileHeader: FileHeader;
-  extraction: withContent;
+  extraction?: withContent;
 };
 
 export interface ArcFiles<withContent = never> {
@@ -154,7 +154,7 @@ export abstract class Extractor<withContent = never> {
         if (arcFile === 'ERAR_END_ARCHIVE') {
           break;
         }
-        if (arcFile.extraction === 'skipped' || arcFile.fileHeader.flags.directory) {
+        if (arcFile.extraction === 'skipped') {
           continue;
         }
         count++;

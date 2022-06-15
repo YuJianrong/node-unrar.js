@@ -50,8 +50,10 @@ document.querySelector<HTMLDivElement>('#file')?.addEventListener(
       const filesDom = document.querySelector<HTMLDivElement>('.box')!;
       [...filesDom.childNodes].forEach((node) => filesDom.removeChild(node));
 
+      filesDom.appendChild(fillTemplate('section-title', { title: 'Archive Header' }));
       filesDom.appendChild(fillTemplate('arc-header', { archiveComment: arcHeader.comment }));
 
+      filesDom.appendChild(fillTemplate('section-title', { title: 'File Headers' }));
       for (const fileHeader of fileHeaders) {
         filesDom.appendChild(
           fillTemplate('file-header', {
@@ -63,12 +65,16 @@ document.querySelector<HTMLDivElement>('#file')?.addEventListener(
         );
       }
 
+      filesDom.appendChild(fillTemplate('section-title', { title: 'File Contents' }));
       const { files } = extractor.extract({ files: (fileHeader) => !fileHeader.flags.encrypted });
       for (const file of files) {
         filesDom.appendChild(
           fillTemplate('content', {
             fileName: file.fileHeader.name,
-            content: new TextDecoder('utf-8').decode(file.extraction),
+            directory: file.fileHeader.flags.directory ? 'Yes' : 'No',
+            content: file.extraction
+              ? new TextDecoder('utf-8').decode(file.extraction)
+              : '[No Content]',
           }),
         );
       }

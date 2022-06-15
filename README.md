@@ -5,7 +5,7 @@
 [![MIT License](https://badges.frapsoft.com/os/mit/mit.svg?v=103)](https://opensource.org/licenses/mit-license.php)
 [![TypeScript](https://badges.frapsoft.com/typescript/code/typescript.svg?v=101)](https://www.typescriptlang.org/)
 
-`node-unrar.js` is a npm module to extract rar archive in pure JavaScript. It's combined by a Javascript adoption layer and JavaScript unRar library compiled by [Emscripten](http://emscripten.org/) from the [C++ unrar library](http://www.rarlab.com/rar/unrarsrc-6.0.2.tar.gz) which hosted on http://www.rarlab.com/rar_add.htm .
+`node-unrar.js` is a npm module to extract rar archive in pure JavaScript. It's combined by a Javascript adoption layer and JavaScript unRar library compiled by [Emscripten](http://emscripten.org/) from the [C++ unrar library](http://www.rarlab.com/rar/unrarsrc-6.1.7.tar.gz) which hosted on <http://www.rarlab.com/rar_add.htm> .
 
 ## Installation
 
@@ -103,8 +103,7 @@ npm install node-unrar-js
     - `files: Generator<ArcFile>` : The iterator of the `ArcFile` objects
     - Members in `ArcFile`:
       - `fileHeader: FileHeader` : The header of the extracted file
-      - `extraction: Uint8Array` : The extracted content of the file (`createExtractorFromData` only).
-  - Note: Different to `getFileList`, only files will be parsed by this api, the folders will be skipped.
+      - `extraction?: Uint8Array` : The extracted content of the file (`createExtractorFromData` only). If the `ArcFile` is a folder (`ArcFile.fileHeader.flags.directory` is `true`), the `extraction` will be undefined, otherwise it will be the content of the file (in `Uint8Array).
 
 ```js
 {
@@ -230,6 +229,11 @@ This module is licensed under MIT.
 
 ### Changelog
 
+#### 2.0.0 (2022-06-15)
+
+- Add support for NodeJs v18
+- **(Breaking change)**: `ArcFile.extraction` is optional for `createExtractorFromData` now. If `ArcFile.fileHeader.flags.directory` is `true`, this field will be `undefined`.
+
 #### 1.0.6 (2022-03-16)
 
 - Add `createExtractorFromFile` support in Webpack
@@ -261,6 +265,6 @@ This module is licensed under MIT.
 - **(Breaking change)**: The extractor object return by `createExtractorFromData` and `createExtractorFromFile` are now promise object. Since loading the wasm object in the latest EMScriten is asynchronized.
 - **(Breaking change)**: The `fileHeaders` and `files` returned by the extractions api are changed from array to iterator, make the extraction lazy.
 
-#### 0.8.0:
+#### 0.8.0
 
 - First release
