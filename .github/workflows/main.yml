@@ -45,6 +45,7 @@ jobs:
         with:
           cache: "npm"
           node-version: 16.x
+      - run: npm ci
       - name: Download the build artifacts
         uses: actions/download-artifact@v3
         with:
