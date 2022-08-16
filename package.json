@@ -1,6 +1,6 @@
 {
   "name": "node-unrar-js",
-  "version": "2.0.0",
+  "version": "0.0.0-semantic-release",
   "description": "Pure JavaScript RAR archive extractor by compile the official unrar lib by Emscripten.",
   "homepage": "https://github.com/YuJianrong/node-unrar.js",
   "bugs": {
@@ -13,6 +13,7 @@
     "prepare": "wget https://www.rarlab.com/rar/unrarsrc-6.1.7.tar.gz && tar -xf unrarsrc-6.1.7.tar.gz -C src/cpp && rm -rf unrarsrc-6.1.7.tar.gz && husky install",
     "clean": "rm -rf dist coverage dist_map esm",
     "clean:test": "rm -rf dist/test dist/build esm/test esm/build",
+    "commit": "cz",
     "lint": "eslint './src/**/*.ts' --max-warnings 0",
     "tsc": "tsc",
     "build:debug": "tsc && node ./dist/build/make.js",
@@ -27,11 +28,15 @@
   "author": "Jianrong Yu <yujianrong@gmail.com>",
   "license": "MIT",
   "devDependencies": {
+    "@commitlint/cli": "^17.0.3",
+    "@commitlint/config-conventional": "^17.0.3",
     "@types/eslint": "^8.4.3",
     "@types/mocha": "^9.1.1",
     "@types/shelljs": "^0.8.11",
     "@typescript-eslint/eslint-plugin": "^5.28.0",
     "@typescript-eslint/parser": "^5.28.0",
+    "commitizen": "^4.2.5",
+    "cz-conventional-changelog": "^3.3.0",
     "eslint": "^8.17.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.0.0",
@@ -52,5 +57,10 @@
     "*.{ts,tsx}": [
       "eslint --fix --max-warnings 0"
     ]
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }
