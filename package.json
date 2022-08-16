@@ -10,15 +10,16 @@
   "main": "./dist/index.js",
   "module": "./esm/index.esm.js",
   "scripts": {
-    "prepare": "wget https://www.rarlab.com/rar/unrarsrc-6.1.7.tar.gz && tar -xf unrarsrc-6.1.7.tar.gz -C src/cpp && rm -rf unrarsrc-6.1.7.tar.gz && husky install",
+    "prepare": "husky install",
     "clean": "rm -rf dist coverage dist_map esm",
-    "clean:test": "rm -rf dist/test dist/build esm/test esm/build",
+    "clean:test": "rm -rf dist/test dist/build esm/test esm/build dist/**/*.map esm/**/*.map",
     "commit": "cz",
     "lint": "eslint './src/**/*.ts' --max-warnings 0",
     "tsc": "tsc",
     "build:debug": "tsc && node ./dist/build/make.js",
     "prebuild:release": "npm run lint",
     "build:release": "npm run clean && tsc && node ./dist/build/make.js release && tsc -p tsconfig-esm.json && node ./dist/build/make.js release esm",
+    "postinstall": "wget https://www.rarlab.com/rar/unrarsrc-6.1.7.tar.gz && tar -xf unrarsrc-6.1.7.tar.gz -C src/cpp && rm -rf unrarsrc-6.1.7.tar.gz",
     "test": "mocha dist/test/*.spec.js",
     "test:debug": "npm run test -- --inspect-brk"
   },
@@ -62,5 +63,10 @@
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
-  }
+  },
+  "files": [
+    "dist",
+    "esm",
+    "*.md"
+  ]
 }
