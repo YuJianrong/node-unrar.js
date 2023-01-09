@@ -21,7 +21,7 @@ const ERROR_CODE = {
 } as const;
 
 export type FailReason = Exclude<
-  typeof ERROR_CODE[keyof typeof ERROR_CODE],
+  (typeof ERROR_CODE)[keyof typeof ERROR_CODE],
   'ERAR_SUCCESS' | 'ERAR_END_ARCHIVE'
 >;
 
