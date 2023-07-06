@@ -34,19 +34,19 @@
     "@types/eslint": "^8.40.2",
     "@types/mocha": "^10.0.1",
     "@types/shelljs": "^0.8.12",
-    "@typescript-eslint/eslint-plugin": "^5.60.1",
-    "@typescript-eslint/parser": "^5.60.1",
+    "@typescript-eslint/eslint-plugin": "^5.61.0",
+    "@typescript-eslint/parser": "^5.61.0",
     "commitizen": "^4.3.0",
     "cz-conventional-changelog": "^3.3.0",
-    "eslint": "^8.43.0",
+    "eslint": "^8.44.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-prettier": "^4.2.1",
     "husky": "^8.0.3",
-    "lint-staged": "^13.2.2",
+    "lint-staged": "^13.2.3",
     "mocha": "^10.2.0",
     "prettier": "^2.8.8",
     "shelljs": "^0.8.5",
-    "typescript": "^5.1.5"
+    "typescript": "^5.1.6"
   },
   "engines": {
     "node": ">=10.0.0"
