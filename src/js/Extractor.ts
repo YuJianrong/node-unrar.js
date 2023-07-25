@@ -43,7 +43,11 @@ const ERROR_MSG: { [k in FailReason]: string } = {
 };
 
 export class UnrarError extends Error {
-  constructor(public reason: FailReason, message: string, public file?: string) {
+  constructor(
+    public reason: FailReason,
+    message: string,
+    public file?: string,
+  ) {
     super(message);
   }
 }
@@ -114,7 +118,10 @@ export abstract class Extractor<withContent = never> {
   private _archive: any;
 
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  constructor(protected unrar: any, password = '') {
+  constructor(
+    protected unrar: any,
+    password = '',
+  ) {
     this._password = password;
     this._archive = null;
   }
