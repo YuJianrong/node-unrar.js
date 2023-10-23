@@ -30,7 +30,7 @@
   "license": "MIT",
   "devDependencies": {
     "@commitlint/cli": "^17.8.0",
-    "@commitlint/config-conventional": "^17.8.0",
+    "@commitlint/config-conventional": "^18.0.0",
     "@types/eslint": "^8.44.4",
     "@types/mocha": "^10.0.2",
     "@types/shelljs": "^0.8.13",
