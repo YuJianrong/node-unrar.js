@@ -1,3 +1,11 @@
+## [2.0.1](https://github.com/YuJianrong/node-unrar.js/compare/v2.0.0...v2.0.1) (2023-11-22)
+
+
+### Bug Fixes
+
+* fix husky blocker on semantic-release ([88cd80c](https://github.com/YuJianrong/node-unrar.js/commit/88cd80cd60cb5dd054235e4a0376d2ad2b745213))
+* fix the case when file size is greater than 2G ([#323](https://github.com/YuJianrong/node-unrar.js/issues/323)) ([f81cacd](https://github.com/YuJianrong/node-unrar.js/commit/f81cacde37e4725a453563e9faa58e7932c23dcb))
+
 #### 2.0.0 (2022-06-15)
 
 - Add support for NodeJs v18
