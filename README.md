@@ -209,7 +209,7 @@ If you want to compile the module by yourself, please follow the steps below:
 
 - Download the c++ source of unRar library by:
 
-`npm run prepare`
+`npm run downloadUnrarSrc`
 
 - Build for debug:
 
