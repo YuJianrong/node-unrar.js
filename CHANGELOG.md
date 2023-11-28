@@ -1,3 +1,10 @@
+## [2.0.2](https://github.com/YuJianrong/node-unrar.js/compare/v2.0.1...v2.0.2) (2023-11-28)
+
+
+### Bug Fixes
+
+* remove the postinstall script which should not be executed when installed on user side ([#329](https://github.com/YuJianrong/node-unrar.js/issues/329)) ([16b4e3c](https://github.com/YuJianrong/node-unrar.js/commit/16b4e3c0fca8602392d7f492830867b05e762f4a)), closes [#324](https://github.com/YuJianrong/node-unrar.js/issues/324)
+
 ## [2.0.1](https://github.com/YuJianrong/node-unrar.js/compare/v2.0.0...v2.0.1) (2023-11-22)
 
 
