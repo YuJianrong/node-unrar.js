@@ -25,7 +25,7 @@ jspm_packages
 .node_repl_history
 
 dist*
-esm
+esm*
 .vscode/launch.json
 .npmrc
 umd

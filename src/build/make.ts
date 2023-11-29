@@ -2,6 +2,7 @@ import * as shjs from 'shelljs';
 
 const release = process.argv.indexOf('release') !== -1;
 const esm = process.argv.indexOf('esm') !== -1;
+const asm: boolean = process.argv.indexOf('asm') !== -1;
 
 console.log(`start Emscripten building ${release ? 'release' : ''} ${esm ? 'esm' : ''}`);
 
@@ -78,13 +79,13 @@ shjs.exec(
     '-s FILESYSTEM=0',
     '-s DISABLE_EXCEPTION_CATCHING=0',
     '-s FETCH_SUPPORT_INDEXEDDB=0',
-    // '-s WASM=0',
+    asm ? '-s WASM=0' : '-s WASM=1',
     `-s EXPORTED_RUNTIME_METHODS='["setTempRet0"]'`,
     '--memory-init-file 0',
     release ? '-O3' : '-g3',
     // release ? '' : '--source-map-base ./dist/js/',
     '--js-library ./src/cpp/bridge/bridge.js',
-    `-o ./${esm ? 'esm' : 'dist'}/js/unrar.js`,
+    `-o ./${asm ? (esm ? 'esm-asm' : 'dist-asm') : esm ? 'esm' : 'dist'}/js/unrar.js`,
     unrarFiles.map((file) => `./src/cpp/unrar/${file}.cpp`).join(' '),
     extraFiles.map((file) => `${file}.cpp`).join(' '),
   ].join(' '),

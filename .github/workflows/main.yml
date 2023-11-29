@@ -32,9 +32,11 @@ jobs:
           path: |
             dist
             esm
+            dist-asm
+            esm-asm
 
   publish-npm:
-    if: ${{ github.ref == 'refs/heads/master' }}
+    if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/beta' }}
     needs: build
     runs-on: ubuntu-latest
     steps:

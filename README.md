@@ -197,6 +197,18 @@ const extractor = await createExtractorFromFile({ wasmBinary, filepath: './WithC
 
 Note: the package must be loaded from `'node-unrar-js/esm'` instead of `'node-unrar-js'` to enable the function `createExtractorFromFile` in ES Module.
 
+## Use asm.js instead of WASM
+
+In any case the WASM (WebAssembly) is not working for you, you may try to switch to [asm.js(http://asmjs.org/)). To use `asm.js`, please do:
+
+```Typescript
+// For CommonJS
+const unrar = require("node-unrar-js/dist-asm");
+// Or, For ESModule
+import { createExtractorFromData } from 'node-unrar-js/esm-asm';
+
+```
+
 ## TypeScript
 
 This module is written in [TypeScript](https://www.typescriptlang.org/), you can import it directly in TypeScript and get the benefit of static type checking and auto-complete of IDE.

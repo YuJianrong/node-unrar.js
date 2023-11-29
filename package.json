@@ -13,13 +13,13 @@
     "prepare": "husky install",
     "downloadUnrarSrc": "wget https://www.rarlab.com/rar/unrarsrc-6.1.7.tar.gz && tar -xf unrarsrc-6.1.7.tar.gz -C src/cpp && rm -rf unrarsrc-6.1.7.tar.gz && husky install",
     "clean": "rm -rf dist coverage dist_map esm",
-    "clean:test": "rm -rf dist/test dist/build esm/test esm/build dist/**/*.map esm/**/*.map",
+    "clean:test": "rm -rf dist/test dist/build dist/**/*.map esm/test esm/build esm/**/*.map dist-asm/test dist-asm/build dist-asm/**/*.map esm-asm/test esm-asm/build esm-asm/**/*.map",
     "commit": "cz",
     "lint": "eslint './src/**/*.ts' --max-warnings 0",
     "tsc": "tsc",
     "build:debug": "tsc && node ./dist/build/make.js",
     "prebuild:release": "npm run lint",
-    "build:release": "npm run clean && tsc && node ./dist/build/make.js release && tsc -p tsconfig-esm.json && node ./dist/build/make.js release esm",
+    "build:release": "npm run clean && tsc && node ./dist/build/make.js release && tsc --outDir dist-asm && node ./dist/build/make.js release asm && tsc -p tsconfig-esm.json && node ./dist/build/make.js release esm && tsc -p tsconfig-esm.json --outDir esm-asm && node ./dist/build/make.js release esm asm",
     "test": "mocha dist/test/*.spec.js",
     "test:debug": "npm run test -- --inspect-brk"
   },
@@ -68,7 +68,9 @@
   },
   "files": [
     "dist",
+    "dist-asm",
     "esm",
+    "esm-asm",
     "*.md"
   ]
 }
