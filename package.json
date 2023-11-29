@@ -1,6 +1,6 @@
 {
   "name": "node-unrar-js",
-  "version": "2.0.2",
+  "version": "2.1.0-beta.1",
   "description": "Pure JavaScript RAR archive extractor by compile the official unrar lib by Emscripten.",
   "homepage": "https://github.com/YuJianrong/node-unrar.js",
   "bugs": {

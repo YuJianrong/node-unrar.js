@@ -1,3 +1,10 @@
+# [2.1.0-beta.1](https://github.com/YuJianrong/node-unrar.js/compare/v2.0.2...v2.1.0-beta.1) (2023-11-29)
+
+
+### Features
+
+* enable asm.js ([976359b](https://github.com/YuJianrong/node-unrar.js/commit/976359b053e3df88ae56f36794a363a6c6e44b92))
+
 ## [2.0.2](https://github.com/YuJianrong/node-unrar.js/compare/v2.0.1...v2.0.2) (2023-11-28)
 
 
